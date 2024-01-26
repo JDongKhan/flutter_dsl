@@ -27,19 +27,19 @@ class JSCaller {
   bool hasInject = false;
 
   void setup(String js, Function? callback) {
-    if (hasInject) {
-      return;
-    }
     //监听页面刷新
     injectFunction();
     this.callback = callback;
     //注入bridge
     JsEvalResult bridgeResult = flutterJs.evaluate(injectJs);
     print('加载bridge代码:$bridgeResult');
+    if (hasInject) {
+      return;
+    }
     //注入页面js
     JsEvalResult result = flutterJs.evaluate(js);
     print('加载js代码:$result');
-    if (result.stringResult == null) {
+    if (result.stringResult == 'null') {
       hasInject = true;
     }
   }

@@ -2,9 +2,11 @@ part of '../flutter_dsl.dart';
 
 class FlutterDSLWidget extends StatefulWidget {
   final String path;
+  final Function? linkAction;
   const FlutterDSLWidget({
     super.key,
     required this.path,
+    this.linkAction,
   });
 
   @override
