@@ -1,6 +1,7 @@
 part of '../flutter_dsl.dart';
 
 class FlutterDSLParser {
+  LinkAction? linkAction;
   String js = '';
   JSCaller jsCaller = JSCaller();
 
@@ -13,6 +14,7 @@ class FlutterDSLParser {
 
   ///根据内容解析xml
   Future<Widget> parser(String content) async {
+    jsCaller.linkAction = linkAction;
     String page = "<page>$content</page>";
     XmlDocument document = await compute((message) => XmlDocument.parse(message), page);
     //处理ui
@@ -58,4 +60,5 @@ class FlutterDSLParser {
     }
     return null;
   }
+
 }

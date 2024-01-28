@@ -14,7 +14,12 @@ class FlutterDSLButtonBuilder extends FlutterDSLWidgetBuilder {
       widget: TextButton(
         onPressed: () {
           if (click != null) {
-            jsCaller.callJsMethod(click);
+            if (click.contains(':') == true) {
+              jsCaller.onClick(click);
+            } else {
+              jsCaller.callJsMethod(click);
+            }
+
           }
         },
         child: child ?? const SizedBox.shrink(),

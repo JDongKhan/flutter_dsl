@@ -24,7 +24,7 @@
         data.index++;
         data.title = "点击事件"+data.index;
         dslBridge.setState();
-        dslBridge.log('点击事件'+data.title);
+        console.log('点击事件'+data.title);
         return args;
     }
 </script>

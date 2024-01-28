@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_js/flutter_js.dart';
 
+typedef LinkAction = void Function(dynamic link);
+
 class JSCaller {
   JavascriptRuntime flutterJs = getJavascriptRuntime();
+  LinkAction? linkAction;
   Function? callback;
 
   String injectJs = '''
@@ -77,5 +80,11 @@ class JSCaller {
     JsEvalResult result = flutterJs.evaluate('(()=>{return data.$field; })();');
     debugPrint('执行js代码$result');
     return result.stringResult;
+  }
+
+
+
+  void onClick(dynamic link){
+    linkAction?.call(link);
   }
 }
