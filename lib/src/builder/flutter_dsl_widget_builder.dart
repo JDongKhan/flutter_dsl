@@ -7,7 +7,7 @@ abstract class FlutterDSLWidgetBuilder {
   Widget build(XmlElement node, JSCaller jsCaller, [dynamic item]) {
     String? vIf = node.getAttribute('v-if');
     if (vIf != null) {
-      bool result = jsCaller.executeExpression(vIf);
+      bool result = jsCaller.callJsMethod(vIf);
       if (!result) {
         return const SizedBox.shrink();
       }

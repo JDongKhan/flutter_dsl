@@ -88,7 +88,7 @@ class JSCaller {
     }
     JsEvalResult result = JsContainer.instance.evaluate(method);
     debugPrint('执行js代码$result');
-    return result;
+    return result.rawResult;
   }
 
   bool executeExpression(String expression) {
