@@ -4,6 +4,7 @@
             <view style="color:#cecece;font-size:20rpx;">11111</view>
             <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
             <button click="add(11)">{{data.title}}</button>
+            <button click="add2(11)">{{data.title2}}</button>
             <button click="platform://gotoNext">跳转</button>
             <button click="refresh">刷新</button>
             <image style="width:200rpx;height:200rpx;" src="assets/1.png"></image>
@@ -19,6 +20,7 @@
 {
     data:reactive({
         title: "我是字段端",
+        title2: "我是字段端",
         index:0,
     }),
     onLoad(){
@@ -33,7 +35,11 @@
        console.log('点击事件' + this.data.title);
        return args;
    },
-
+   add2:function(args) {
+       this.data.index++;
+       this.data.title2 = "点击事件" + this.data.index;
+       return args;
+   },
    refresh:function(){
         this.setState();
    }

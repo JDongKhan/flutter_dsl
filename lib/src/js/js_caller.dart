@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dsl/src/js/js_container.dart';
+import 'package:flutter_dsl/src/obs/obs_Interface.dart';
 import 'package:flutter_js/flutter_js.dart';
+
+import '../obs/observer.dart';
 
 typedef LinkAction = void Function(dynamic link);
 
@@ -15,25 +18,71 @@ class JSCaller {
 
   bool hasInject = false;
 
+  bool _isSameObject(dynamic obj1, dynamic obj2) {
+    if (obj1.runtimeType != obj2.runtimeType) {
+      return false;
+    }
+    if (obj1 is Map) {
+      obj2 as Map;
+      for (String key in obj1.keys) {
+        if (!obj2.containsKey(key)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  String _getAllKeys(dynamic obj) {
+    if (obj is Map) {
+      StringBuffer sb = StringBuffer();
+      obj.forEach((key, value) {
+        sb.write('${key}_');
+      });
+      return sb.toString();
+    }
+    return obj.toString();
+  }
+
+  ///根据关系触发事件
   void setData(dynamic target, String key, dynamic value) {
-    key = "data.$key";
+    String allKey = _getAllKeys(target);
+    key = '$allKey$key';
+    FieldObs? obs = data[key];
+    if (obs == null) {
+      return;
+    }
+    for (var element in obs.obsList) {
+      element.update();
+    }
+  }
+
+  ///数据建立关系
+  void getData(dynamic target, String key) {
+    Observer? s = ObsInterface.proxy;
+    if (s == null) {
+      return;
+    }
+    String allKey = _getAllKeys(target);
+    key = '$allKey$key';
     FieldObs? obs = data[key];
     if (obs == null) {
       obs = FieldObs();
       data[key] = obs;
     }
-    obs.value = value;
-    for (var element in obs.obsList) {
-      element.refresh();
+    obs.target = target;
+    if (!obs.obsList.contains(s)) {
+      obs.obsList.add(s);
     }
-  }
 
-  void getData(String key) {}
+    debugPrint('get$key');
+  }
 
   void setup(String js, Function? callback) {
     //监听页面刷新
     JsContainer.instance.registerRefresh(key, callback);
     JsContainer.instance.registerSetData(key, setData);
+    JsContainer.instance.registerGetData(key, getData);
     if (hasInject) {
       JsContainer.instance.evaluate('if($key.onShow){$key.onShow();}');
       return;
@@ -54,6 +103,7 @@ class JSCaller {
          const handler = {
             get:function(target,property){
              console.log("代理get:"+property);
+             sendMessage("getData",JSON.stringify({page:'$key',target:target,key:property}));
              return target[property];
             },
             set:function(target,property,value){
@@ -91,10 +141,10 @@ class JSCaller {
     return result.rawResult;
   }
 
-  bool executeExpression(String expression) {
-    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.expression($expression) }); })();');
-    return false;
-  }
+  // bool executeExpression(String expression) {
+  //   JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.expression($expression) }); })();');
+  //   return false;
+  // }
 
   dynamic getField(String field) {
     JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.$field }); })();');
@@ -104,23 +154,7 @@ class JSCaller {
     return map['field'];
   }
 
-  dynamic getObsField(String field, ObserverMixin context) {
-    FieldObs? obs = data[field];
-    if (obs == null) {
-      obs = FieldObs();
-      data[field] = obs;
-    }
-    if (!obs.obsList.contains(context)) {
-      obs.obsList.add(context);
-    }
-    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.$field }); })();');
-    String jsonField = result.stringResult;
-    Map map = jsonDecode(jsonField);
-    debugPrint('执行js代码$result');
-    return map['field'];
-  }
-
-  void removeObs(String field, ObserverMixin context) {
+  void removeObs(String field, Observer context) {
     FieldObs? obs = data[field];
     obs?.obsList.remove(context);
   }
@@ -137,13 +171,7 @@ class JSCaller {
 }
 
 class FieldObs {
+  dynamic target;
   late String key;
-  dynamic value;
-  List<ObserverMixin> obsList = [];
-}
-
-mixin ObserverMixin<T extends StatefulWidget> on State<T> {
-  void refresh() {
-    setState(() {});
-  }
+  List<Observer> obsList = [];
 }

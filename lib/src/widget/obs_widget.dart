@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dsl/src/obs/obs_Interface.dart';
 
 import '../js/js_caller.dart';
+import '../obs/observer.dart';
 
 typedef ValueBuilder = Widget Function(dynamic value);
 
@@ -14,11 +16,15 @@ class Obs extends StatefulWidget {
   State<Obs> createState() => _ObsState();
 }
 
-class _ObsState extends State<Obs> with ObserverMixin<Obs> {
+class _ObsState extends State<Obs> implements Observer {
   List<String> fields = [];
 
   @override
   Widget build(BuildContext context) {
+    return ObsInterface.notifyChildren(this, () => _buildChild());
+  }
+
+  Widget _buildChild() {
     for (var element in fields) {
       widget.jsCaller.removeObs(element, this);
     }
@@ -36,7 +42,7 @@ class _ObsState extends State<Obs> with ObserverMixin<Obs> {
         String? matchedText = match.group(1);
         if (matchedText != null) {
           fields.add(matchedText);
-          dynamic c = jsCaller.getObsField(matchedText, this);
+          dynamic c = jsCaller.getField(matchedText);
           content = content.replaceAll('{{$matchedText}}', c.toString());
         }
       }
@@ -51,5 +57,10 @@ class _ObsState extends State<Obs> with ObserverMixin<Obs> {
       widget.jsCaller.removeObs(element, this);
     }
     super.dispose();
+  }
+
+  @override
+  void update() {
+    setState(() {});
   }
 }

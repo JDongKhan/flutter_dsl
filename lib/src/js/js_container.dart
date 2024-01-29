@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_js/flutter_js.dart';
 
 typedef SetDataAction = void Function(dynamic target, String key, dynamic value);
+typedef GetDataAction = void Function(dynamic target, String key);
 
 class JsContainer {
   static JsContainer? _instance;
@@ -55,6 +56,15 @@ class JsContainer {
     pageInfo.setData = callback;
   }
 
+  void registerGetData(String page, GetDataAction callback) {
+    PageInfo? pageInfo = _pages[page];
+    if (pageInfo == null) {
+      pageInfo = PageInfo();
+      _pages[page] = pageInfo;
+    }
+    pageInfo.getData = callback;
+  }
+
   void _injectFunction() {
     flutterJs.onMessage('onInit', (dynamic args) {
       debugPrint('bridge注入成功:$args');
@@ -63,6 +73,15 @@ class JsContainer {
     flutterJs.onMessage('log', (dynamic args) {
       Map map = args as Map;
       debugPrint('DSL:${map['message']}');
+    });
+
+    flutterJs.onMessage('getData', (dynamic args) {
+      Map map = args as Map;
+      String page = map['page'].toString();
+      dynamic target = map['target'];
+      String key = map['key'];
+      PageInfo? pageInfo = _pages[page];
+      pageInfo?.getData?.call(target, key);
     });
 
     flutterJs.onMessage('setData', (dynamic args) {
@@ -96,4 +115,5 @@ class JsContainer {
 class PageInfo {
   Function? refreshCallback;
   SetDataAction? setData;
+  GetDataAction? getData;
 }
