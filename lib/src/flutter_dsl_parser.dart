@@ -50,8 +50,8 @@ class FlutterDSLParser {
       js = jsNode?.value?.toString() ?? '';
       js = '''
       const $key = {
-       setState:function() {
-         sendMessage("setState",JSON.stringify({page:'$key',}));
+        setState:function() {
+          sendMessage("setState",JSON.stringify({page:'$key',}));
         },
         ...$js
       };

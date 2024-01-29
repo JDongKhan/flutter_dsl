@@ -14,13 +14,14 @@ class JsContainer {
   var dslBridge;
   if (typeof dslBridge === 'undefined') {
       dslBridge = {
-        onLoad(){
-         sendMessage("onLoad",JSON.stringify({}));
+        onInit(){
+         sendMessage("onInit",JSON.stringify({}));
         },
         log(message){
          sendMessage("log",JSON.stringify({message:message}));
         },
       }
+      dslBridge.onInit();
   }
   ''';
 
@@ -41,7 +42,7 @@ class JsContainer {
   }
 
   void _injectFunction() {
-    flutterJs.onMessage('onLoad', (dynamic args) {
+    flutterJs.onMessage('onInit', (dynamic args) {
       debugPrint('bridge注入成功:$args');
     });
 
