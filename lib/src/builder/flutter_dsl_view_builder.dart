@@ -4,8 +4,8 @@ class FlutterDSLViewBuilder extends FlutterDSLWidgetBuilder {
   const FlutterDSLViewBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSCaller jsCaller) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller);
+  NodeData createWidget(XmlElement node, JSCaller jsCaller, [dynamic item]) {
+    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     Widget? child = children.isNotEmpty ? children.first : null;
     return NodeData(
       widget: child ?? const SizedBox.shrink(),

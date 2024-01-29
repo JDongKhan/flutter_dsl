@@ -1,0 +1,36 @@
+<template>
+    <lazy-list-view>
+        <column style="background-color:#f6f6f6;">
+            <view style="color:#cecece;font-size:20rpx;">11111</view>
+            <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
+            <button click="changeState">切换状态</button>
+            <text>{{data.state}}</text>
+            <text style="color:#ff00ff;font-size:30rpx;" v-if="data.state==1">我显示了</text>
+        </column>
+        <column v-for="(item,index) in data.dataList">
+            <view style="color:#cecece;font-size:20rpx;">{{item}}</view>
+            <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
+        </column>
+    </lazy-list-view>
+
+</template>
+
+<script>
+{
+    data:reactive({
+        dataList: ['我是字段端1','我是字段端2'],
+        state: 0,
+    }),
+    onLoad(){
+        console.log('onLoad');
+    },
+    onDestroy(){
+        console.log('onDestroy');
+    },
+
+    changeState(){
+        this.data.state = 1;
+    },
+}
+
+</script>

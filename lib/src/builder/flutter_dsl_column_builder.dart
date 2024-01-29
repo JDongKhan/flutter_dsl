@@ -4,8 +4,8 @@ class FlutterDSLColumnBuilder extends FlutterDSLWidgetBuilder {
   const FlutterDSLColumnBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSCaller jsCaller) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller);
+  NodeData createWidget(XmlElement node, JSCaller jsCaller, [dynamic item]) {
+    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     return NodeData(
       widget: Column(
         children: children,

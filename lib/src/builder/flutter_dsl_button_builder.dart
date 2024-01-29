@@ -4,8 +4,8 @@ class FlutterDSLButtonBuilder extends FlutterDSLWidgetBuilder {
   const FlutterDSLButtonBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSCaller jsCaller) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller);
+  NodeData createWidget(XmlElement node, JSCaller jsCaller, [dynamic item]) {
+    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     Widget? child = children.isNotEmpty ? children.first : null;
     String? style = node.getAttribute('style');
     ButtonAttribute attribute = ButtonAttribute(style: style);
@@ -19,7 +19,6 @@ class FlutterDSLButtonBuilder extends FlutterDSLWidgetBuilder {
             } else {
               jsCaller.callJsMethod(click);
             }
-
           }
         },
         child: child ?? const SizedBox.shrink(),

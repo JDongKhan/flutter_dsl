@@ -59,11 +59,13 @@ class NextPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlutterDSLWidget(
-      path: 'assets/view.xml',
-      linkAction: (dynamic link) {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
-      },
+    return Scaffold(
+      body: FlutterDSLWidget(
+        path: 'assets/view_2.xml',
+        linkAction: (dynamic link) {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
+        },
+      ),
     );
   }
 }

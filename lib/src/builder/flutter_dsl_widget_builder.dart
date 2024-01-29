@@ -4,8 +4,16 @@ abstract class FlutterDSLWidgetBuilder {
   const FlutterDSLWidgetBuilder();
 
   ///build
-  Widget build(XmlElement node, JSCaller jsCaller) {
-    NodeData nodeData = createWidget(node, jsCaller);
+  Widget build(XmlElement node, JSCaller jsCaller, [dynamic item]) {
+    String? vIf = node.getAttribute('v-if');
+    if (vIf != null) {
+      bool result = jsCaller.executeExpression(vIf);
+      if (!result) {
+        return const SizedBox.shrink();
+      }
+    }
+
+    NodeData nodeData = createWidget(node, jsCaller, item);
     Widget child = nodeData.widget;
 
     //处理通用样式
@@ -39,10 +47,10 @@ abstract class FlutterDSLWidgetBuilder {
   }
 
   ///创建控件
-  NodeData createWidget(XmlElement node, JSCaller jsCaller);
+  NodeData createWidget(XmlElement node, JSCaller jsCaller, [dynamic item]);
 
   ///处理子控件
-  List<Widget> createChildren(Iterator<XmlNode> nodeList, JSCaller jsCaller) {
+  List<Widget> createChildren(Iterator<XmlNode> nodeList, JSCaller jsCaller, dynamic item) {
     List<Widget> list = [];
     while (nodeList.moveNext()) {
       XmlNode node = nodeList.current;
@@ -52,20 +60,47 @@ abstract class FlutterDSLWidgetBuilder {
           continue;
         }
         if (v.contains('{{') && v.contains('}}')) {
-          list.add(Obs(field: v, jsCaller: jsCaller, builder: (newV) => Text(newV)));
+          if (item != null && item != 'null') {
+            String? text = parserText(v, jsCaller, item);
+            list.add(Text(text ?? ' null'));
+          } else {
+            list.add(Obs(field: v, jsCaller: jsCaller, builder: (newV) => Text(newV ?? 'null')));
+          }
         } else {
           list.add(Text(v));
         }
       } else if (node is XmlElement) {
         String nodeName = node.name.local;
         FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-        Widget? widget = builder?.build(node, jsCaller);
+        Widget? widget = builder?.build(node, jsCaller, item);
         if (widget != null) {
           list.add(widget);
         }
       }
     }
     return list;
+  }
+
+  String? parserText(String v, JSCaller jsCaller, [dynamic item]) {
+    if (v.contains('{{') && v.contains('}}')) {
+      String content = v;
+      RegExp regex = RegExp(r'{{(.*?)}}');
+      Iterable<Match> matches = regex.allMatches(v);
+      for (Match match in matches) {
+        String? matchedText = match.group(1);
+        if (matchedText != null) {
+          dynamic c;
+          if (item != null) {
+            c = item[matchedText];
+          } else {
+            c = jsCaller.getField(matchedText);
+          }
+          content = content.replaceAll('{{$matchedText}}', c.toString());
+        }
+      }
+      return content;
+    }
+    return v;
   }
 }
 

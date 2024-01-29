@@ -15,20 +15,41 @@ class Obs extends StatefulWidget {
 }
 
 class _ObsState extends State<Obs> with ObserverMixin<Obs> {
-  String field = '';
+  List<String> fields = [];
 
   @override
   Widget build(BuildContext context) {
-    String v = widget.field.replaceAll('{{', '');
-    v = v.replaceAll('}}', '');
-    field = v;
-    v = widget.jsCaller.getObsField(v, this);
+    for (var element in fields) {
+      widget.jsCaller.removeObs(element, this);
+    }
+    fields = [];
+    String? v = parserText(widget.field, widget.jsCaller);
     return widget.builder(v);
+  }
+
+  String? parserText(String v, JSCaller jsCaller) {
+    if (v.contains('{{') && v.contains('}}')) {
+      String content = v;
+      RegExp regex = RegExp(r'{{(.*?)}}');
+      Iterable<Match> matches = regex.allMatches(v);
+      for (Match match in matches) {
+        String? matchedText = match.group(1);
+        if (matchedText != null) {
+          fields.add(matchedText);
+          dynamic c = jsCaller.getObsField(matchedText, this);
+          content = content.replaceAll('{{$matchedText}}', c.toString());
+        }
+      }
+      return content;
+    }
+    return v;
   }
 
   @override
   void dispose() {
-    widget.jsCaller.removeObs(field, this);
+    for (var element in fields) {
+      widget.jsCaller.removeObs(element, this);
+    }
     super.dispose();
   }
 }

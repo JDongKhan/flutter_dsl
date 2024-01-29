@@ -3,7 +3,7 @@
         <column style="background-color:#f6f6f6;height:800rpx;">
             <view style="color:#cecece;font-size:20rpx;">11111</view>
             <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
-            <button click="add(11)">{{title}}</button>
+            <button click="add(11)">{{data.title}}</button>
             <button click="platform://gotoNext">跳转</button>
             <button click="refresh">刷新</button>
             <image style="width:200rpx;height:200rpx;" src="assets/1.png"></image>
@@ -17,10 +17,10 @@
 
 <script>
 {
-   data : {
-     title: "我是字段端",
-     index:0,
-   },
+    data:reactive({
+        title: "我是字段端",
+        index:0,
+    }),
     onLoad(){
         console.log('onLoad');
     },
@@ -28,9 +28,9 @@
         console.log('onDestroy');
     },
    add:function(args) {
-       this.proxy.index++;
-       this.proxy.title = "点击事件"+this.proxy.index;
-       console.log('点击事件'+this.proxy.title);
+       this.data.index++;
+       this.data.title = "点击事件" + this.data.index;
+       console.log('点击事件' + this.data.title);
        return args;
    },
 

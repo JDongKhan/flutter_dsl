@@ -4,7 +4,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
   const FlutterDSLTextBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSCaller jsCaller) {
+  NodeData createWidget(XmlElement node, JSCaller jsCaller, [dynamic item]) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
@@ -12,7 +12,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     return NodeData(
       widget: RichText(
         text: TextSpan(
-          children: _createTextSpans(node.children.iterator),
+          children: _createTextSpans(node.children.iterator, jsCaller),
           style: TextStyle(
             color: color,
             fontSize: fontSize,
@@ -23,7 +23,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     );
   }
 
-  List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList) {
+  List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList, JSCaller jsCaller) {
     List<TextSpan> children = [];
     while (nodeList.moveNext()) {
       XmlNode node = nodeList.current;
@@ -32,15 +32,16 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
         if (v == '') {
           continue;
         }
+        v = parserText(v, jsCaller) ?? 'null';
         children.add(TextSpan(text: v));
       } else if (node is XmlElement) {
-        children.add(_createChildTextSpan(node));
+        children.add(_createChildTextSpan(node, jsCaller));
       }
     }
     return children;
   }
 
-  TextSpan _createChildTextSpan(XmlElement node) {
+  TextSpan _createChildTextSpan(XmlElement node, JSCaller jsCaller) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
@@ -48,7 +49,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     if (color != null) {
       textStyle = TextStyle(color: color);
     }
-    return TextSpan(text: null, children: _createTextSpans(node.children.iterator), style: textStyle);
+    return TextSpan(text: null, children: _createTextSpans(node.children.iterator, jsCaller), style: textStyle);
   }
 }
 

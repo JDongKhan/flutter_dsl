@@ -1,6 +1,7 @@
 library flutter_dsl;
 
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dsl/src/js/unique_key_generator.dart';
@@ -22,6 +23,7 @@ part 'src/builder/flutter_dsl_view_builder.dart';
 part 'src/builder/flutter_dsl_text_builder.dart';
 part 'src/builder/flutter_dsl_column_builder.dart';
 part 'src/builder/flutter_dsl_list_view_builder.dart';
+part 'src/builder/flutter_dsl_lazy_list_view_builder.dart';
 part 'src/builder/flutter_dsl_row_builder.dart';
 part 'src/builder/flutter_dsl_button_builder.dart';
 part 'src/builder/flutter_dsl_image_builder.dart';

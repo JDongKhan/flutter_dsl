@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dsl/src/js/js_container.dart';
 import 'package:flutter_js/flutter_js.dart';
@@ -14,6 +16,7 @@ class JSCaller {
   bool hasInject = false;
 
   void setData(String key, dynamic value) {
+    key = "data.$key";
     FieldObs? obs = data[key];
     if (obs == null) {
       obs = FieldObs();
@@ -24,6 +27,8 @@ class JSCaller {
       element.refresh();
     }
   }
+
+  void getData(String key) {}
 
   void setup(String js, Function? callback) {
     //监听页面刷新
@@ -38,26 +43,28 @@ class JSCaller {
         setState:function() {
           sendMessage("setState",JSON.stringify({page:'$key',}));
         },
+        expression:function(expression){
+          console.log("expression:"+expression);
+          return expression;
+        },
         ...$js
       };
-      
-      function startProxy(){
-        const data = $key.data;
-        const handler = {
-          get:function(target,property){
-           console.log("代理get:"+property);
-           return target[property];
-          },
-          set:function(target,property,value){
-            console.log("代理set:"+property);
-            sendMessage("setData",JSON.stringify({page:'$key',key:property,value:value}));
-            target[property] = value;
-          }
-        };
-        const proxy = new Proxy(data,handler);
-        $key.proxy = proxy;
+     
+      function reactive(value){
+         const handler = {
+            get:function(target,property){
+             console.log("代理get:"+property);
+             return target[property];
+            },
+            set:function(target,property,value){
+              console.log("代理set:"+property);
+              sendMessage("setData",JSON.stringify({page:'$key',target:target,key:property,value:value}));
+              target[property] = value;
+            }
+         }
+         return new Proxy(value,handler);
       }
-      startProxy();
+     
       ''';
     //注入页面js
     JsEvalResult result = JsContainer.instance.evaluate(pageJs);
@@ -84,13 +91,20 @@ class JSCaller {
     return result;
   }
 
-  String getField(String field) {
-    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return $key.proxy.$field; })();');
-    debugPrint('执行js代码$result');
-    return result.stringResult;
+  bool executeExpression(String expression) {
+    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.expression($expression) }); })();');
+    return false;
   }
 
-  String getObsField(String field, ObserverMixin context) {
+  dynamic getField(String field) {
+    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.$field }); })();');
+    String jsonField = result.stringResult;
+    Map map = jsonDecode(jsonField);
+    debugPrint('执行js代码$result');
+    return map['field'];
+  }
+
+  dynamic getObsField(String field, ObserverMixin context) {
     FieldObs? obs = data[field];
     if (obs == null) {
       obs = FieldObs();
@@ -99,9 +113,11 @@ class JSCaller {
     if (!obs.obsList.contains(context)) {
       obs.obsList.add(context);
     }
-    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return $key.proxy.$field; })();');
+    JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.$field }); })();');
+    String jsonField = result.stringResult;
+    Map map = jsonDecode(jsonField);
     debugPrint('执行js代码$result');
-    return result.stringResult;
+    return map['field'];
   }
 
   void removeObs(String field, ObserverMixin context) {
