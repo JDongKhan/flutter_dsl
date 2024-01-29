@@ -15,7 +15,7 @@ class JSCaller {
 
   bool hasInject = false;
 
-  void setData(String key, dynamic value) {
+  void setData(dynamic target, String key, dynamic value) {
     key = "data.$key";
     FieldObs? obs = data[key];
     if (obs == null) {

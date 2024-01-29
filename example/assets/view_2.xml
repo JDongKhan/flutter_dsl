@@ -20,6 +20,10 @@
     data:reactive({
         dataList: ['我是字段端1','我是字段端2'],
         state: 0,
+        userInfo:reactive( {
+            name:'2222'
+            }
+        ),
     }),
     onLoad(){
         console.log('onLoad');
@@ -30,6 +34,7 @@
 
     changeState(){
         this.data.state = 1;
+        this.data.userInfo.name = '1111';
     },
 }
 

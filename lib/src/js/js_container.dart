@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_js/flutter_js.dart';
 
-typedef SetDataAction = void Function(String key, dynamic value);
+typedef SetDataAction = void Function(dynamic target, String key, dynamic value);
 
 class JsContainer {
   static JsContainer? _instance;
@@ -68,10 +68,11 @@ class JsContainer {
     flutterJs.onMessage('setData', (dynamic args) {
       Map map = args as Map;
       String page = map['page'].toString();
+      dynamic target = map['target'];
       String key = map['key'];
       dynamic value = map['value'];
       PageInfo? pageInfo = _pages[page];
-      pageInfo?.setData?.call(key, value);
+      pageInfo?.setData?.call(target, key, value);
     });
 
     flutterJs.onMessage('setState', (dynamic args) {
