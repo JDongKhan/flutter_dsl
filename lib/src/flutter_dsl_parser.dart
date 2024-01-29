@@ -48,14 +48,6 @@ class FlutterDSLParser {
     if (script != null) {
       XmlNode? jsNode = script.firstChild;
       js = jsNode?.value?.toString() ?? '';
-      js = '''
-      const $key = {
-        setState:function() {
-          sendMessage("setState",JSON.stringify({page:'$key',}));
-        },
-        ...$js
-      };
-      ''';
       jsCaller.setup(js, onRefresh);
     }
   }

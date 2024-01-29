@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_js/flutter_js.dart';
 
+typedef SetDataAction = void Function(String key, dynamic value);
+
 class JsContainer {
   static JsContainer? _instance;
   JsContainer._() {
@@ -36,9 +38,21 @@ class JsContainer {
 
   void registerRefresh(String page, Function? callback) {
     PageInfo? pageInfo = _pages[page];
-    pageInfo ??= PageInfo();
+    if (pageInfo == null) {
+      pageInfo = PageInfo();
+      _pages[page] = pageInfo;
+    }
     pageInfo.refreshCallback = callback;
     _pages[page] = pageInfo;
+  }
+
+  void registerSetData(String page, SetDataAction callback) {
+    PageInfo? pageInfo = _pages[page];
+    if (pageInfo == null) {
+      pageInfo = PageInfo();
+      _pages[page] = pageInfo;
+    }
+    pageInfo.setData = callback;
   }
 
   void _injectFunction() {
@@ -49,6 +63,15 @@ class JsContainer {
     flutterJs.onMessage('log', (dynamic args) {
       Map map = args as Map;
       debugPrint('DSL:${map['message']}');
+    });
+
+    flutterJs.onMessage('setData', (dynamic args) {
+      Map map = args as Map;
+      String page = map['page'].toString();
+      String key = map['key'];
+      dynamic value = map['value'];
+      PageInfo? pageInfo = _pages[page];
+      pageInfo?.setData?.call(key, value);
     });
 
     flutterJs.onMessage('setState', (dynamic args) {
@@ -63,8 +86,13 @@ class JsContainer {
   JsEvalResult evaluate(String code, {String? sourceUrl}) {
     return flutterJs.evaluate(code, sourceUrl: sourceUrl);
   }
+
+  void destroy(String page) {
+    _pages.remove(page);
+  }
 }
 
 class PageInfo {
   Function? refreshCallback;
+  SetDataAction? setData;
 }

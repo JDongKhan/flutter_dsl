@@ -52,12 +52,10 @@ abstract class FlutterDSLWidgetBuilder {
           continue;
         }
         if (v.contains('{{') && v.contains('}}')) {
-          v = v.replaceAll('{{', '');
-          v = v.replaceAll('}}', '');
-          v = jsCaller.getField(v);
+          list.add(Obs(field: v, jsCaller: jsCaller, builder: (newV) => Text(newV)));
+        } else {
+          list.add(Text(v));
         }
-        Widget widget = Text(v);
-        list.add(widget);
       } else if (node is XmlElement) {
         String nodeName = node.name.local;
         FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];

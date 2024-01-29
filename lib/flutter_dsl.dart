@@ -4,6 +4,7 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dsl/src/js/unique_key_generator.dart';
+import 'package:flutter_dsl/src/widget/obs_widget.dart';
 import 'package:xml/xpath.dart';
 
 import 'src/builder/builder.dart';

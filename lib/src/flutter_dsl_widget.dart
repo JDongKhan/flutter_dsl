@@ -30,7 +30,7 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
       setState(() {});
     };
     return FutureBuilder(
-      future: parser.parserFromPath(key,widget.path),
+      future: parser.parserFromPath(key, widget.path),
       builder: (c, sp) {
         if (sp.hasData) {
           return sp.data!;
@@ -38,5 +38,11 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
         return const SizedBox.shrink();
       },
     );
+  }
+
+  @override
+  void dispose() {
+    parser.jsCaller.destroy();
+    super.dispose();
   }
 }
