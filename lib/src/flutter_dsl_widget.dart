@@ -1,7 +1,5 @@
 part of '../flutter_dsl.dart';
 
-
-
 class FlutterDSLWidget extends StatefulWidget {
   final String path;
   final LinkAction? linkAction;
@@ -17,10 +15,12 @@ class FlutterDSLWidget extends StatefulWidget {
 
 class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
   FlutterDSLParser parser = FlutterDSLParser();
+  late String key;
 
   @override
   void initState() {
     parser.linkAction = widget.linkAction;
+    key = UniqueKeyGenerator.generateUniqueKey();
     super.initState();
   }
 
@@ -30,7 +30,7 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
       setState(() {});
     };
     return FutureBuilder(
-      future: parser.parserFromPath(widget.path),
+      future: parser.parserFromPath(key,widget.path),
       builder: (c, sp) {
         if (sp.hasData) {
           return sp.data!;

@@ -38,12 +38,15 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Center(
+      body: Center(
         child: SizedBox(
           width: 500,
           height: 600,
           child: FlutterDSLWidget(
             path: 'assets/view.xml',
+            linkAction: (dynamic link) {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
+            },
           ),
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -56,7 +59,11 @@ class NextPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return FlutterDSLWidget(
+      path: 'assets/view.xml',
+      linkAction: (dynamic link) {
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
+      },
+    );
   }
 }
-

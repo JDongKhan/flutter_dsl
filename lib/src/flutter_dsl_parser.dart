@@ -7,20 +7,21 @@ class FlutterDSLParser {
 
   Function? onRefresh;
 
-  Future<Widget> parserFromPath(String path) async {
+  Future<Widget> parserFromPath(String key, String path) async {
     String context = await rootBundle.loadString(path);
-    return parser(context);
+    return parser(key, context);
   }
 
   ///根据内容解析xml
-  Future<Widget> parser(String content) async {
+  Future<Widget> parser(String key, String content) async {
     jsCaller.linkAction = linkAction;
+    jsCaller.key = key;
     String page = "<page>$content</page>";
     XmlDocument document = await compute((message) => XmlDocument.parse(message), page);
     //处理ui
     XmlNode? template = document.xpath('/page/template').firstOrNull;
     //处理js
-    _handleJS(document);
+    _handleJS(key, document);
     //渲染ui
     if (template != null && template.children.isNotEmpty) {
       Iterator nodeList = template.children.iterator;
@@ -41,12 +42,20 @@ class FlutterDSLParser {
   }
 
   ///处理js
-  Future<void> _handleJS(XmlDocument document) async {
+  Future<void> _handleJS(String key, XmlDocument document) async {
     //处理js
     XmlNode? script = document.xpath('/page/script').firstOrNull;
     if (script != null) {
       XmlNode? jsNode = script.firstChild;
       js = jsNode?.value?.toString() ?? '';
+      js = '''
+      const $key = {
+       setState:function() {
+         sendMessage("setState",JSON.stringify({page:'$key',}));
+        },
+        ...$js
+      };
+      ''';
       jsCaller.setup(js, onRefresh);
     }
   }
@@ -60,5 +69,4 @@ class FlutterDSLParser {
     }
     return null;
   }
-
 }
