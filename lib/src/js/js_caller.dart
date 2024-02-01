@@ -33,21 +33,13 @@ class JSCaller {
     return true;
   }
 
-  String _getAllKeys(dynamic obj) {
-    if (obj is Map) {
-      StringBuffer sb = StringBuffer();
-      obj.forEach((key, value) {
-        sb.write('${key}_');
-      });
-      return sb.toString();
-    }
-    return obj.toString();
-  }
-
   ///根据关系触发事件
   void setData(dynamic target, String key, dynamic value) {
-    String allKey = _getAllKeys(target);
-    key = '$allKey$key';
+    String? keyId = target['keyId'];
+    if (keyId == null) {
+      return;
+    }
+    key = '${keyId}__$key';
     FieldObs? obs = data[key];
     if (obs == null) {
       return;
@@ -63,8 +55,11 @@ class JSCaller {
     if (s == null) {
       return;
     }
-    String allKey = _getAllKeys(target);
-    key = '$allKey$key';
+    String? keyId = target['keyId'];
+    if (keyId == null) {
+      return;
+    }
+    key = '${keyId}__$key';
     FieldObs? obs = data[key];
     if (obs == null) {
       obs = FieldObs();
@@ -89,6 +84,8 @@ class JSCaller {
     }
     String pageJs = '''
       var $key = {
+        objCount:0,
+        
         setState:function() {
           sendMessage("setState",JSON.stringify({page:'$key',}));
         },
@@ -103,6 +100,9 @@ class JSCaller {
          const handler = {
             get:function(target,property){
              console.log("代理get:"+property);
+             if (typeof target.keyId === 'undefined') {
+                target.keyId = '__key__' + $key.objCount++
+             }
              sendMessage("getData",JSON.stringify({page:'$key',target:target,key:property}));
              return target[property];
             },
