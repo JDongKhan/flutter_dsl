@@ -49,3 +49,10 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
     super.dispose();
   }
 }
+
+class FlutterDSlInject {
+  ///注册自定义组件解析
+  static void register(String key, FlutterDSLWidgetBuilder widgetBuilder) {
+    mappingBuilder.putIfAbsent(key, () => widgetBuilder);
+  }
+}
