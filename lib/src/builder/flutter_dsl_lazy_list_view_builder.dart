@@ -5,11 +5,16 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
 
   @override
   NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
-    List<Widget> children = createSlivers(node.children.iterator, jsCaller, item);
     return NodeData(
-      widget: CustomScrollView(
-        slivers: children,
-      ),
+      widget: Obs(
+          debugLabel: 'lazyListView',
+          jsChannel: jsCaller,
+          builder: (context) {
+            List<Widget> children = createSlivers(node.children.iterator, jsCaller, item);
+            return CustomScrollView(
+              slivers: children,
+            );
+          }),
     );
   }
 

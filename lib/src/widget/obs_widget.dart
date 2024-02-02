@@ -8,15 +8,13 @@ typedef ValueBuilder = Widget Function(dynamic value);
 
 class Obs extends StatefulWidget {
   final JSPageChannel jsChannel;
-  final ValueBuilder builder;
-  final dynamic item;
-  final String content;
+  final WidgetBuilder builder;
+  final String? debugLabel;
   const Obs({
     super.key,
-    required this.content,
+    this.debugLabel,
     required this.jsChannel,
     required this.builder,
-    this.item,
   });
 
   @override
@@ -26,9 +24,58 @@ class Obs extends StatefulWidget {
 class _ObsState extends State<Obs> {
   late Observer _observer;
 
+  void _update() {
+    setState(() {});
+  }
+
   @override
   void initState() {
-    _observer = Observer(_update, widget.jsChannel);
+    _observer = Observer(_update, widget.jsChannel, widget.debugLabel);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ObsInterface.notifyChildren(_observer, () => _buildChild());
+  }
+
+  Widget _buildChild() {
+    _observer.clear();
+    return widget.builder(context);
+  }
+
+  @override
+  void dispose() {
+    _observer.clear();
+    super.dispose();
+  }
+}
+
+class ObsWidget extends StatefulWidget {
+  final JSPageChannel jsChannel;
+  final ValueBuilder builder;
+  final dynamic item;
+  final String content;
+  final String? debugLabel;
+  const ObsWidget({
+    super.key,
+    required this.content,
+    required this.jsChannel,
+    required this.builder,
+    this.debugLabel,
+    this.item,
+  });
+
+  @override
+  State<ObsWidget> createState() => _ObsWidgetState();
+}
+
+class _ObsWidgetState extends State<ObsWidget> {
+  late Observer _observer;
+
+  @override
+  void initState() {
+    _observer = Observer(_update, widget.jsChannel, widget.debugLabel);
     super.initState();
   }
 
@@ -80,11 +127,13 @@ class Obs2 extends StatefulWidget {
   final ValueBuilder builder;
   final JSPageChannel jsChannel;
   final String vIf;
+  final String? debugLabel;
   const Obs2({
     super.key,
     required this.jsChannel,
     required this.builder,
     required this.vIf,
+    this.debugLabel,
   });
 
   @override
@@ -96,7 +145,7 @@ class _Obs2State extends State<Obs2> {
 
   @override
   void initState() {
-    _observer = Observer(_update, widget.jsChannel);
+    _observer = Observer(_update, widget.jsChannel, widget.debugLabel);
     super.initState();
   }
 

@@ -3,7 +3,12 @@ import '../js/js_page_channel.dart';
 class Observer {
   final Function _function;
   final JSPageChannel channel;
-  Observer(this._function, this.channel);
+  final String? debugLabel;
+  Observer(
+    this._function,
+    this.channel,
+    this.debugLabel,
+  );
   void update() {
     _function.call();
   }

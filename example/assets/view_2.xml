@@ -4,12 +4,11 @@
             <view style="color:#cecece;font-size:20rpx;">11111</view>
             <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
             <button click="changeState">切换状态</button>
-            <text>{{data.state}}</text>
+            <text style="color:#000000">{{data.state}}-{{data.userInfo.name}}</text>
             <text style="color:#ff00ff;font-size:30rpx;" v-if="data.state==1">我显示了</text>
         </column>
         <column v-for="(item,index) in data.dataList">
             <view style="color:#cecece;font-size:20rpx;">{{item}}</view>
-            <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
         </column>
     </lazy-list-view>
 
@@ -20,10 +19,10 @@
     data:reactive({
         dataList: ['我是字段端1','我是字段端2'],
         state: 0,
-        userInfo:reactive( {
-            name:'2222'
-            }
-        ),
+        index:0,
+        userInfo: {
+           name:'2222'
+        },
     }),
     onLoad(){
         console.log('onLoad');
@@ -35,10 +34,13 @@
     changeState(){
         if (this.data.state == 0){
             this.data.state = 1;
+            this.data.userInfo.name = '1111';
         } else {
             this.data.state = 0;
+            this.data.userInfo.name = '0000';
         }
-        this.data.userInfo.name = '1111';
+        this.data.index++;
+        this.data.dataList.push('--' + this.data.index + '--')
     },
 
 }

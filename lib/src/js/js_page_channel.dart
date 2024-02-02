@@ -19,12 +19,15 @@ class JSPageChannel {
   bool hasInject = false;
 
   ///根据关系触发事件
-  void setData(dynamic target, String key, dynamic value) {
-    String? keyId = target['keyId'];
-    if (keyId == null) {
+  void setData(dynamic target, String? targetId, String key, dynamic value) {
+    if (targetId == null) {
       return;
     }
-    key = '${keyId}__$key';
+    if (target is List) {
+      key = targetId;
+    } else {
+      key = '${targetId}__$key';
+    }
     FieldObs? obs = data[key];
     if (obs == null) {
       return;
@@ -35,16 +38,16 @@ class JSPageChannel {
   }
 
   ///数据建立关系
-  void getData(dynamic target, String key) {
+  void getData(dynamic target, String targetId, String key) {
     Observer? s = ObsInterface.proxy;
     if (s == null) {
       return;
     }
-    String? keyId = target['keyId'];
-    if (keyId == null) {
-      return;
+    if (target is List) {
+      key = targetId;
+    } else {
+      key = '${targetId}__$key';
     }
-    key = '${keyId}__$key';
     FieldObs? obs = data[key];
     if (obs == null) {
       obs = FieldObs();
@@ -84,18 +87,26 @@ class JSPageChannel {
       };
      
       function reactive(value){
+      
+          for (let i in value) {
+            let v = value[i]
+            console.log(i + ':' + typeof v)
+            if (typeof v === 'object'){
+              value[i] = reactive(v)
+            }
+          }
          const handler = {
             get:function(target,property){
              console.log("代理get:"+property);
-             if (typeof target.keyId === 'undefined') {
-                target.keyId = '__key__' + $key.objCount++
+             if (typeof target.targetId === 'undefined') {
+                target.targetId = '__target__' + $key.objCount++
              }
-             sendMessage("getData",JSON.stringify({page:'$key',target:target,key:property}));
+             sendMessage("getData",JSON.stringify({page:'$key',target:target,key:property,targetId:target.targetId,}));
              return target[property];
             },
             set:function(target,property,value){
               console.log("代理set:"+property);
-              sendMessage("setData",JSON.stringify({page:'$key',target:target,key:property,value:value}));
+              sendMessage("setData",JSON.stringify({page:'$key',target:target,key:property,value:value,targetId:target.targetId,}));
               target[property] = value;
             }
          }
