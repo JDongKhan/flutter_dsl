@@ -5,6 +5,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dsl/src/js/unique_key_generator.dart';
+import 'package:flutter_dsl/src/obs/obs_Interface.dart';
 import 'package:flutter_dsl/src/widget/obs_widget.dart';
 import 'package:xml/xpath.dart';
 
@@ -12,7 +13,7 @@ import 'src/builder/builder.dart';
 import 'package:flutter/material.dart';
 import 'package:xml/xml.dart';
 
-import 'src/js/js_caller.dart';
+import 'src/js/js_page_channel.dart';
 import 'package:flutter/services.dart';
 
 part 'src/flutter_dsl_widget.dart';

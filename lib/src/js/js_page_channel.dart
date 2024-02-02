@@ -9,7 +9,7 @@ import '../obs/observer.dart';
 
 typedef LinkAction = void Function(dynamic link);
 
-class JSCaller {
+class JSPageChannel {
   LinkAction? linkAction;
   Function? callback;
   late String key;
@@ -17,21 +17,6 @@ class JSCaller {
   Map<String, FieldObs> data = {};
 
   bool hasInject = false;
-
-  bool _isSameObject(dynamic obj1, dynamic obj2) {
-    if (obj1.runtimeType != obj2.runtimeType) {
-      return false;
-    }
-    if (obj1 is Map) {
-      obj2 as Map;
-      for (String key in obj1.keys) {
-        if (!obj2.containsKey(key)) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
 
   ///根据关系触发事件
   void setData(dynamic target, String key, dynamic value) {
@@ -70,9 +55,10 @@ class JSCaller {
       obs.obsList.add(s);
     }
 
-    debugPrint('get$key');
+    debugPrint('绑定$key和组件的关系');
   }
 
+  ///页面初始化
   void setup(String js, Function? callback) {
     //监听页面刷新
     JsContainer.instance.registerRefresh(key, callback);
@@ -126,6 +112,14 @@ class JSCaller {
     }
   }
 
+  ///处理表达式
+  dynamic callExpression(String expression) {
+    JsEvalResult result = JsContainer.instance.evaluate('(function(){return $key.$expression})()');
+    debugPrint('执行js代码$result');
+    return result.rawResult;
+  }
+
+  ///调用js方法
   dynamic callJsMethod(String method, [List? args]) {
     if (!method.contains('(')) {
       if (args == null) {
@@ -146,6 +140,7 @@ class JSCaller {
   //   return false;
   // }
 
+  ///获取js里面的字段
   dynamic getField(String field) {
     JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$key.$field }); })();');
     String jsonField = result.stringResult;
@@ -154,15 +149,18 @@ class JSCaller {
     return map['field'];
   }
 
+  ///移除widget和数据的绑定
   void removeObs(String field, Observer context) {
     FieldObs? obs = data[field];
     obs?.obsList.remove(context);
   }
 
+  ///点击事件
   void onClick(dynamic link) {
     linkAction?.call(link);
   }
 
+  ///页面销毁
   void destroy() {
     callJsMethod('onDestroy()');
     JsContainer.instance.destroy(key);

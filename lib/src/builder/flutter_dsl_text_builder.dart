@@ -4,7 +4,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
   const FlutterDSLTextBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSCaller jsCaller, [dynamic item]) {
+  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
@@ -23,7 +23,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     );
   }
 
-  List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList, JSCaller jsCaller) {
+  List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList, JSPageChannel jsCaller) {
     List<TextSpan> children = [];
     while (nodeList.moveNext()) {
       XmlNode node = nodeList.current;
@@ -41,7 +41,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     return children;
   }
 
-  TextSpan _createChildTextSpan(XmlElement node, JSCaller jsCaller) {
+  TextSpan _createChildTextSpan(XmlElement node, JSPageChannel jsCaller) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');

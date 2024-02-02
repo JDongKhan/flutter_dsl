@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dsl/src/obs/obs_Interface.dart';
 
-import '../js/js_caller.dart';
+import '../js/js_page_channel.dart';
 import '../obs/observer.dart';
 
 typedef ValueBuilder = Widget Function(dynamic value);
 
 class Obs extends StatefulWidget {
-  final JSCaller jsCaller;
+  final JSPageChannel jsCaller;
   final ValueBuilder builder;
   final String field;
   const Obs({super.key, required this.field, required this.jsCaller, required this.builder});
@@ -16,24 +16,35 @@ class Obs extends StatefulWidget {
   State<Obs> createState() => _ObsState();
 }
 
-class _ObsState extends State<Obs> implements Observer {
+class _ObsState extends State<Obs> {
   List<String> fields = [];
+  late Observer _observer;
+
+  @override
+  void initState() {
+    _observer = Observer(_update);
+    super.initState();
+  }
+
+  void _update() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ObsInterface.notifyChildren(this, () => _buildChild());
+    return ObsInterface.notifyChildren(_observer, () => _buildChild());
   }
 
   Widget _buildChild() {
     for (var element in fields) {
-      widget.jsCaller.removeObs(element, this);
+      widget.jsCaller.removeObs(element, _observer);
     }
     fields = [];
     String? v = parserText(widget.field, widget.jsCaller);
     return widget.builder(v);
   }
 
-  String? parserText(String v, JSCaller jsCaller) {
+  String? parserText(String v, JSPageChannel jsCaller) {
     if (v.contains('{{') && v.contains('}}')) {
       String content = v;
       RegExp regex = RegExp(r'{{(.*?)}}');
@@ -54,13 +65,8 @@ class _ObsState extends State<Obs> implements Observer {
   @override
   void dispose() {
     for (var element in fields) {
-      widget.jsCaller.removeObs(element, this);
+      widget.jsCaller.removeObs(element, _observer);
     }
     super.dispose();
-  }
-
-  @override
-  void update() {
-    setState(() {});
   }
 }

@@ -3,7 +3,7 @@ part of '../flutter_dsl.dart';
 class FlutterDSLParser {
   LinkAction? linkAction;
   String js = '';
-  JSCaller jsCaller = JSCaller();
+  JSPageChannel jsChannel = JSPageChannel();
 
   Function? onRefresh;
 
@@ -14,8 +14,8 @@ class FlutterDSLParser {
 
   ///根据内容解析xml
   Future<Widget> parser(String key, String content) async {
-    jsCaller.linkAction = linkAction;
-    jsCaller.key = key;
+    jsChannel.linkAction = linkAction;
+    jsChannel.key = key;
     String page = "<page>$content</page>";
     XmlDocument document = await compute((message) => XmlDocument.parse(message), page);
     //处理ui
@@ -48,7 +48,7 @@ class FlutterDSLParser {
     if (script != null) {
       XmlNode? jsNode = script.firstChild;
       js = jsNode?.value?.toString() ?? '';
-      jsCaller.setup(js, onRefresh);
+      jsChannel.setup(js, onRefresh);
     }
   }
 
@@ -57,7 +57,7 @@ class FlutterDSLParser {
     if (node is XmlElement) {
       String nodeName = node.name.local;
       FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-      return builder?.build(node, jsCaller);
+      return builder?.build(node, jsChannel);
     }
     return null;
   }

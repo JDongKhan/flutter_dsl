@@ -1,8 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_dsl/flutter_dsl.dart';
 
 void main() {
-  runApp(const MyApp());
+  FlutterError.onError = (FlutterErrorDetails details) async {
+    print(details);
+  };
+
+  runZonedGuarded(
+    () {
+      runApp(const MyApp());
+    },
+    (error, stack) {
+      print('$error \n $stack');
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -38,16 +51,13 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: SizedBox(
-          width: 500,
-          height: 600,
-          child: FlutterDSLWidget(
-            path: 'assets/view.xml',
-            linkAction: (dynamic link) {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
-            },
-          ),
+      body: Container(
+        alignment: Alignment.center,
+        child: FlutterDSLWidget(
+          path: 'assets/view.xml',
+          linkAction: (dynamic link) {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
+          },
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );

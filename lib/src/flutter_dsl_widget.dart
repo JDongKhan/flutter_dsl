@@ -29,6 +29,9 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
     parser.onRefresh = () {
       setState(() {});
     };
+    if (kDebugMode) {
+      FutureBuilder.debugRethrowError = true;
+    }
     return FutureBuilder(
       future: parser.parserFromPath(key, widget.path),
       builder: (c, sp) {
@@ -42,7 +45,7 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
 
   @override
   void dispose() {
-    parser.jsCaller.destroy();
+    parser.jsChannel.destroy();
     super.dispose();
   }
 }
