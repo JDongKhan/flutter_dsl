@@ -39,7 +39,6 @@
             this.data.state = 0;
         }
         this.data.userInfo.name = '1111';
-        this.setState();
     },
 
 }

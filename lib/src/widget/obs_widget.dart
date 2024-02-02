@@ -7,22 +7,28 @@ import '../obs/observer.dart';
 typedef ValueBuilder = Widget Function(dynamic value);
 
 class Obs extends StatefulWidget {
-  final JSPageChannel jsCaller;
+  final JSPageChannel jsChannel;
   final ValueBuilder builder;
-  final String field;
-  const Obs({super.key, required this.field, required this.jsCaller, required this.builder});
+  final dynamic item;
+  final String content;
+  const Obs({
+    super.key,
+    required this.content,
+    required this.jsChannel,
+    required this.builder,
+    this.item,
+  });
 
   @override
   State<Obs> createState() => _ObsState();
 }
 
 class _ObsState extends State<Obs> {
-  List<String> fields = [];
   late Observer _observer;
 
   @override
   void initState() {
-    _observer = Observer(_update);
+    _observer = Observer(_update, widget.jsChannel);
     super.initState();
   }
 
@@ -36,11 +42,8 @@ class _ObsState extends State<Obs> {
   }
 
   Widget _buildChild() {
-    for (var element in fields) {
-      widget.jsCaller.removeObs(element, _observer);
-    }
-    fields = [];
-    String? v = parserText(widget.field, widget.jsCaller);
+    _observer.clear();
+    String? v = parserText(widget.content, widget.jsChannel);
     return widget.builder(v);
   }
 
@@ -52,8 +55,12 @@ class _ObsState extends State<Obs> {
       for (Match match in matches) {
         String? matchedText = match.group(1);
         if (matchedText != null) {
-          fields.add(matchedText);
-          dynamic c = jsCaller.getField(matchedText);
+          dynamic c;
+          if (widget.item != null) {
+            c = widget.item[matchedText];
+          } else {
+            c = jsCaller.getField(matchedText);
+          }
           content = content.replaceAll('{{$matchedText}}', c.toString());
         }
       }
@@ -64,9 +71,52 @@ class _ObsState extends State<Obs> {
 
   @override
   void dispose() {
-    for (var element in fields) {
-      widget.jsCaller.removeObs(element, _observer);
-    }
+    _observer.clear();
+    super.dispose();
+  }
+}
+
+class Obs2 extends StatefulWidget {
+  final ValueBuilder builder;
+  final JSPageChannel jsChannel;
+  final String vIf;
+  const Obs2({
+    super.key,
+    required this.jsChannel,
+    required this.builder,
+    required this.vIf,
+  });
+
+  @override
+  State<Obs2> createState() => _Obs2State();
+}
+
+class _Obs2State extends State<Obs2> {
+  late Observer _observer;
+
+  @override
+  void initState() {
+    _observer = Observer(_update, widget.jsChannel);
+    super.initState();
+  }
+
+  void _update() {
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ObsInterface.notifyChildren(_observer, () => _build());
+  }
+
+  Widget _build() {
+    bool result = widget.jsChannel.callExpression(widget.vIf);
+    return widget.builder(result);
+  }
+
+  @override
+  void dispose() {
+    _observer.clear();
     super.dispose();
   }
 }

@@ -9,8 +9,10 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
     double? fontSize = attribute.getDoubleFromStyle('font-size');
-    return NodeData(
-      widget: RichText(
+    String? v = node.innerXml;
+
+    builder() {
+      return RichText(
         text: TextSpan(
           children: _createTextSpans(node.children.iterator, jsCaller),
           style: TextStyle(
@@ -18,7 +20,25 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
             fontSize: fontSize,
           ),
         ),
-      ),
+      );
+    }
+
+    Widget widget;
+    if (v.contains('{{') && v.contains('}}')) {
+      widget = Obs(
+          content: v,
+          item: item,
+          jsChannel: jsCaller,
+          builder: (context) {
+            node.innerXml = context;
+            return builder();
+          });
+    } else {
+      widget = builder();
+    }
+
+    return NodeData(
+      widget: widget,
       attribute: attribute,
     );
   }
@@ -32,7 +52,6 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
         if (v == '') {
           continue;
         }
-        v = parserText(v, jsCaller) ?? 'null';
         children.add(TextSpan(text: v));
       } else if (node is XmlElement) {
         children.add(_createChildTextSpan(node, jsCaller));

@@ -1,7 +1,7 @@
 <template>
     <column style="background-color:#f6f6f6;height:1000rpx;border-radius: 12rpx;padding:  10rpx  20rpx 30rpx 40rpx;margin:10rpx;">
-        <view style="color:#cecece;font-size:20rpx;font-family:PingFangSC-Regular;">11111</view>
-        <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333</text> </text>
+        <view style="color:#cecece;font-size:20rpx;font-family:PingFangSC-Regular;">{{data.title}}</view>
+        <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333{{data.index}}</text> </text>
         <button click="add(11)">{{data.title}}</button>
         <button click="add2(11)">{{data.title2}}</button>
         <button click="platform://gotoNext">跳转</button>
@@ -23,8 +23,8 @@
 <script>
 {
     data:reactive({
-        title: "我是字段端",
-        title2: "我是字段端",
+        title: "我来自js（点我）",
+        title2: "我来自js（点我）",
         index:0,
     }),
     onLoad(){

@@ -53,6 +53,7 @@ class JSPageChannel {
     obs.target = target;
     if (!obs.obsList.contains(s)) {
       obs.obsList.add(s);
+      s.register(key);
     }
 
     debugPrint('绑定$key和组件的关系');
