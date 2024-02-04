@@ -1,20 +1,19 @@
 part of '../../flutter_dsl.dart';
 
 class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
-  const FlutterDSLLazyListViewBuilder();
+  FlutterDSLLazyListViewBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
-    return NodeData(
-      widget: Obs(
-          debugLabel: 'lazyListView',
-          jsChannel: jsCaller,
-          builder: (context, value) {
-            List<Widget> children = createSlivers(node.children.iterator, jsCaller, item);
-            return CustomScrollView(
-              slivers: children,
-            );
-          }),
+  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+    return Obs(
+      debugLabel: 'lazyListView',
+      jsChannel: jsCaller,
+      builder: (context, value) {
+        List<Widget> children = createSlivers(node.children.iterator, jsCaller, item);
+        return CustomScrollView(
+          slivers: children,
+        );
+      },
     );
   }
 

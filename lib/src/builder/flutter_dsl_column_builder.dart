@@ -1,10 +1,10 @@
 part of '../../flutter_dsl.dart';
 
 class FlutterDSLColumnBuilder extends FlutterDSLWidgetBuilder {
-  const FlutterDSLColumnBuilder();
+  FlutterDSLColumnBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     String? mainAlign = node.getAttribute('main-align');
     String? crossAlign = node.getAttribute('cross-align');
@@ -49,13 +49,11 @@ class FlutterDSLColumnBuilder extends FlutterDSLWidgetBuilder {
         crossAxisAlignment = CrossAxisAlignment.baseline;
         break;
     }
-    return NodeData(
-      widget: Column(
-        mainAxisSize: mainAxisSize,
-        mainAxisAlignment: mainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
-        children: children,
-      ),
+    return Column(
+      mainAxisSize: mainAxisSize,
+      mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment,
+      children: children,
     );
   }
 }

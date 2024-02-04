@@ -1,6 +1,6 @@
 import '../../flutter_dsl.dart';
 
-const Map<String, FlutterDSLWidgetBuilder> mappingBuilder = {
+Map<String, FlutterDSLWidgetBuilder> mappingBuilder = {
   'view': FlutterDSLViewBuilder(),
   'text': FlutterDSLTextBuilder(),
   'column': FlutterDSLColumnBuilder(),

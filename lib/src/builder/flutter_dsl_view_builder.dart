@@ -1,15 +1,13 @@
 part of '../../flutter_dsl.dart';
 
 class FlutterDSLViewBuilder extends FlutterDSLWidgetBuilder {
-  const FlutterDSLViewBuilder();
+  FlutterDSLViewBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     Widget? child = children.isNotEmpty ? children.first : null;
-    return NodeData(
-      widget: child ?? const SizedBox.shrink(),
-    );
+    return child ?? const SizedBox.shrink();
   }
 }
 

@@ -1,7 +1,13 @@
 part of '../../flutter_dsl.dart';
 
 abstract class FlutterDSLWidgetBuilder {
-  const FlutterDSLWidgetBuilder();
+  FlutterDSLWidgetBuilder();
+  Attribute? attribute;
+
+  Attribute createAttribute(XmlElement node) {
+    String? style = node.getAttribute('style');
+    return ViewAttribute(style: style);
+  }
 
   ///build
   Widget build(XmlElement node, JSPageChannel jsChannel, [dynamic item]) {
@@ -23,35 +29,30 @@ abstract class FlutterDSLWidgetBuilder {
   }
 
   Widget _build(XmlElement node, JSPageChannel jsChannel, [dynamic item]) {
-    NodeData nodeData = createWidget(node, jsChannel, item);
-    Widget child = nodeData.widget;
-
     //处理通用样式
-    Attribute? attribute = nodeData.attribute;
-    if (attribute == null) {
-      String? style = node.getAttribute('style');
-      attribute = ViewAttribute(style: style);
-    }
+    attribute = createAttribute(node);
+
+    Widget child = createWidget(node, jsChannel, item);
     //字体颜色
-    Color? color = attribute.getColorFromStyle('color');
-    double? fontSize = attribute.getDoubleFromStyle('font-size');
-    String? fontFamily = attribute.getStyle('font-family');
-    Alignment? alignment = attribute.getAlignment("alignment");
+    Color? color = attribute?.getColorFromStyle('color');
+    double? fontSize = attribute?.getDoubleFromStyle('font-size');
+    String? fontFamily = attribute?.getStyle('font-family');
+    Alignment? alignment = attribute?.getAlignment("alignment");
     //字体颜色
     if (color != null || fontSize != null) {
       child = DefaultTextStyle(style: TextStyle(color: color, fontSize: fontSize, fontFamily: fontFamily), child: child);
     }
 
     // 高度
-    double? width = attribute.getDoubleFromStyle('width');
-    double? height = attribute.getDoubleFromStyle('height');
+    double? width = attribute?.getDoubleFromStyle('width');
+    double? height = attribute?.getDoubleFromStyle('height');
     //背景色
-    Color? backgroundColor = attribute.getColorFromStyle('background-color');
-    Color? foregroundColor = attribute.getColorFromStyle('foregroundColor');
+    Color? backgroundColor = attribute?.getColorFromStyle('background-color');
+    Color? foregroundColor = attribute?.getColorFromStyle('foregroundColor');
     //圆角
-    double? borderRadius = attribute.getDoubleFromStyle('border-radius');
-    EdgeInsets? padding = attribute.getEdgeFromStyle("padding");
-    EdgeInsets? margin = attribute.getEdgeFromStyle('margin');
+    double? borderRadius = attribute?.getDoubleFromStyle('border-radius');
+    EdgeInsets? padding = attribute?.getEdgeFromStyle("padding");
+    EdgeInsets? margin = attribute?.getEdgeFromStyle('margin');
 
     if (alignment != null) {
       child = Align(alignment: alignment, child: child);
@@ -86,8 +87,8 @@ abstract class FlutterDSLWidgetBuilder {
     return child;
   }
 
-  ///创建控件
-  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]);
+  ///创建单个控件
+  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]);
 
   ///处理子控件
   List<Widget> createChildren(Iterator<XmlNode> nodeList, JSPageChannel jsCaller, dynamic item) {
@@ -123,12 +124,6 @@ abstract class FlutterDSLWidgetBuilder {
     }
     return list;
   }
-}
-
-class NodeData {
-  final Widget widget;
-  final Attribute? attribute;
-  NodeData({required this.widget, this.attribute});
 }
 
 abstract class Attribute {

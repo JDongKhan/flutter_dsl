@@ -1,10 +1,10 @@
 part of '../../flutter_dsl.dart';
 
 class FlutterDSLRowBuilder extends FlutterDSLWidgetBuilder {
-  const FlutterDSLRowBuilder();
+  FlutterDSLRowBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     String? mainAlign = node.getAttribute('main-align');
     String? crossAlign = node.getAttribute('cross-align');
@@ -50,13 +50,11 @@ class FlutterDSLRowBuilder extends FlutterDSLWidgetBuilder {
         break;
     }
 
-    return NodeData(
-      widget: Row(
-        mainAxisAlignment: mainAxisAlignment,
-        crossAxisAlignment: crossAxisAlignment,
-        mainAxisSize: mainAxisSize,
-        children: children,
-      ),
+    return Row(
+      mainAxisAlignment: mainAxisAlignment,
+      crossAxisAlignment: crossAxisAlignment,
+      mainAxisSize: mainAxisSize,
+      children: children,
     );
   }
 }

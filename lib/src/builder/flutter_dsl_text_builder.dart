@@ -1,10 +1,10 @@
 part of '../../flutter_dsl.dart';
 
 class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
-  const FlutterDSLTextBuilder();
+  FlutterDSLTextBuilder();
 
   @override
-  NodeData createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
@@ -39,10 +39,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
       widget = builder(node.children.iterator);
     }
 
-    return NodeData(
-      widget: widget,
-      attribute: attribute,
-    );
+    return widget;
   }
 
   List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList, JSPageChannel jsCaller) {
