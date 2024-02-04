@@ -217,8 +217,13 @@ abstract class Attribute {
     if (value == null) {
       return null;
     }
-    value = value.replaceAll('rpx', '');
-    value = value.replaceAll('px', '');
+    if (value.endsWith('rpx')) {
+      value = value.replaceAll('rpx', '');
+      double num = double.tryParse(value) ?? 0;
+      return AdaptUtil.rpx(num);
+    } else if (value.endsWith('px')) {
+      value = value.replaceAll('px', '');
+    }
     return double.tryParse(value) ?? 0;
   }
 

@@ -1,6 +1,6 @@
 <template>
     <column style="background-color:#f6f6f6;height:1000rpx;border-radius: 12rpx;padding:  10rpx  20rpx 30rpx 40rpx;margin:10rpx;">
-        <view style="color:#cecece;font-size:20rpx;font-family:PingFangSC-Regular;">{{data.title}}</view>
+        <view style="color:#cecece;font-size:20rpx;font-family:PingFangSC-Regular;background-color:#00ff00;width:750rpx;">{{data.title}}</view>
         <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333{{data.index}}</text> </text>
         <button click="platform://gotoNextList">跳转到列表页</button>
         <button click="platform://gotoNextForm">跳转到表单页</button>

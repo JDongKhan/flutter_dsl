@@ -9,4 +9,5 @@ const Map<String, FlutterDSLWidgetBuilder> mappingBuilder = {
   'row': FlutterDSLRowBuilder(),
   'button': FlutterDSLButtonBuilder(),
   'image': FlutterDSLImageBuilder(),
+  'input': FlutterDSLInputBuilder(),
 };
