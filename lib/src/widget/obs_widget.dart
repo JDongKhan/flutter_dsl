@@ -90,6 +90,7 @@ class _ObsWidgetState extends State<ObsWidget> {
 
   Widget _buildChild() {
     _observer.clear();
+    var d = ObsInterface.proxy;
     String? v = parserText(widget.content, widget.jsChannel);
     return widget.builder(v);
   }

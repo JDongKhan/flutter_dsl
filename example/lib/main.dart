@@ -54,6 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         alignment: Alignment.center,
         child: FlutterDSLWidget(
+          data: const {
+            'data': {
+              'title': "我来自dart（点我）",
+              'title2': "我来自dart（点我）",
+              'index': 0,
+            },
+          },
           path: 'assets/view.xml',
           linkAction: (dynamic link) {
             Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));

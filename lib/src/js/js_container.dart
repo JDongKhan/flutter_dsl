@@ -37,7 +37,7 @@ class JsContainer {
 
   final Map<String, PageInfo> _pages = {};
 
-  void registerRefresh(String page, Function? callback) {
+  void registerSetState(String page, Function? callback) {
     PageInfo? pageInfo = _pages[page];
     if (pageInfo == null) {
       pageInfo = PageInfo();
@@ -45,6 +45,13 @@ class JsContainer {
     }
     pageInfo.refreshCallback = callback;
     _pages[page] = pageInfo;
+    flutterJs.onMessage('setState', (dynamic args) {
+      Map info = args;
+      String page = info['page'].toString();
+      PageInfo? pageInfo = _pages[page];
+      pageInfo?.refreshCallback?.call();
+      debugPrint('刷新页面');
+    });
   }
 
   void registerSetData(String page, SetDataAction callback) {
@@ -54,37 +61,6 @@ class JsContainer {
       _pages[page] = pageInfo;
     }
     pageInfo.setData = callback;
-  }
-
-  void registerGetData(String page, GetDataAction callback) {
-    PageInfo? pageInfo = _pages[page];
-    if (pageInfo == null) {
-      pageInfo = PageInfo();
-      _pages[page] = pageInfo;
-    }
-    pageInfo.getData = callback;
-  }
-
-  void _injectFunction() {
-    flutterJs.onMessage('onInit', (dynamic args) {
-      debugPrint('bridge注入成功:$args');
-    });
-
-    flutterJs.onMessage('log', (dynamic args) {
-      Map map = args as Map;
-      debugPrint('DSL:${map['message']}');
-    });
-
-    flutterJs.onMessage('getData', (dynamic args) {
-      Map map = args as Map;
-      String page = map['page'].toString();
-      dynamic target = map['target'];
-      String targetId = map['targetId'];
-      String key = map['key'];
-      PageInfo? pageInfo = _pages[page];
-      pageInfo?.getData?.call(target, targetId, key);
-    });
-
     flutterJs.onMessage('setData', (dynamic args) {
       Map map = args as Map;
       String page = map['page'].toString();
@@ -95,13 +71,33 @@ class JsContainer {
       PageInfo? pageInfo = _pages[page];
       pageInfo?.setData?.call(target, targetId, key, value);
     });
+  }
 
-    flutterJs.onMessage('setState', (dynamic args) {
-      Map info = args;
-      String page = info['page'].toString();
+  void registerGetData(String page, GetDataAction callback) {
+    PageInfo? pageInfo = _pages[page];
+    if (pageInfo == null) {
+      pageInfo = PageInfo();
+      _pages[page] = pageInfo;
+    }
+    pageInfo.getData = callback;
+    flutterJs.onMessage('getData', (dynamic args) {
+      Map map = args as Map;
+      String page = map['page'].toString();
+      dynamic target = map['target'];
+      String targetId = map['targetId'];
+      String key = map['key'];
       PageInfo? pageInfo = _pages[page];
-      pageInfo?.refreshCallback?.call();
-      debugPrint('刷新页面');
+      pageInfo?.getData?.call(target, targetId, key);
+    });
+  }
+
+  void _injectFunction() {
+    flutterJs.onMessage('onInit', (dynamic args) {
+      debugPrint('bridge注入成功:$args');
+    });
+    flutterJs.onMessage('log', (dynamic args) {
+      Map map = args as Map;
+      debugPrint('DSL:${map['message']}');
     });
   }
 

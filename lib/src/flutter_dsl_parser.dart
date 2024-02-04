@@ -1,9 +1,12 @@
 part of '../flutter_dsl.dart';
 
 class FlutterDSLParser {
+  final dynamic data;
+  FlutterDSLParser({this.data}) : jsChannel = JSPageChannel(data);
+
   LinkAction? linkAction;
   String js = '';
-  JSPageChannel jsChannel = JSPageChannel();
+  JSPageChannel jsChannel;
 
   Function? onRefresh;
 
@@ -13,15 +16,15 @@ class FlutterDSLParser {
   }
 
   ///根据内容解析xml
-  Future<Widget> parser(String key, String content) async {
+  Future<Widget> parser(String pageId, String content) async {
     jsChannel.linkAction = linkAction;
-    jsChannel.key = key;
+    jsChannel.pageId = pageId;
     String page = "<page>$content</page>";
     XmlDocument document = await compute((message) => XmlDocument.parse(message), page);
     //处理ui
     XmlNode? template = document.xpath('/page/template').firstOrNull;
     //处理js
-    _handleJS(key, document);
+    _handleJS(pageId, document);
     //渲染ui
     if (template != null && template.children.isNotEmpty) {
       Iterator nodeList = template.children.iterator;
@@ -42,7 +45,7 @@ class FlutterDSLParser {
   }
 
   ///处理js
-  Future<void> _handleJS(String key, XmlDocument document) async {
+  Future<void> _handleJS(String pageId, XmlDocument document) async {
     //处理js
     XmlNode? script = document.xpath('/page/script').firstOrNull;
     if (script != null) {

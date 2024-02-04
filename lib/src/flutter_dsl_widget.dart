@@ -3,10 +3,12 @@ part of '../flutter_dsl.dart';
 class FlutterDSLWidget extends StatefulWidget {
   final String path;
   final LinkAction? linkAction;
+  final dynamic data;
   const FlutterDSLWidget({
     super.key,
     required this.path,
     this.linkAction,
+    this.data,
   });
 
   @override
@@ -14,13 +16,14 @@ class FlutterDSLWidget extends StatefulWidget {
 }
 
 class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
-  FlutterDSLParser parser = FlutterDSLParser();
-  late String key;
+  late FlutterDSLParser parser;
+  late String pageId;
 
   @override
   void initState() {
+    parser = FlutterDSLParser(data: widget.data);
     parser.linkAction = widget.linkAction;
-    key = UniqueKeyGenerator.generateUniqueKey();
+    pageId = UniqueKeyGenerator.generateUniqueKey();
     super.initState();
   }
 
@@ -33,7 +36,7 @@ class _FlutterDSLWidgetState extends State<FlutterDSLWidget> {
       FutureBuilder.debugRethrowError = true;
     }
     return FutureBuilder(
-      future: parser.parserFromPath(key, widget.path),
+      future: parser.parserFromPath(pageId, widget.path),
       builder: (c, sp) {
         if (sp.hasData) {
           return sp.data!;

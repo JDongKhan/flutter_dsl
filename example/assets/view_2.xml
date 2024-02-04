@@ -39,8 +39,8 @@
             this.data.state = 0;
             this.data.userInfo.name = '0000';
         }
-        this.data.index++;
-        this.data.dataList.push('--' + this.data.index + '--')
+     //   this.data.index++;
+     //   this.data.dataList.push('--' + this.data.index + '--')
     },
 
 }
