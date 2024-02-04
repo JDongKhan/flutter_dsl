@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dsl/src/utils/utils.dart';
 import 'package:flutter_js/flutter_js.dart';
 
 typedef SetDataAction = void Function(dynamic target, String? targetId, String key, dynamic value);
@@ -33,7 +34,7 @@ class JsContainer {
     _injectFunction();
     //注入bridge
     JsEvalResult bridgeResult = flutterJs.evaluate(injectJs);
-    debugPrint('加载bridge代码:$bridgeResult');
+    LogUtils.log('加载bridge代码:$bridgeResult');
   }
 
   final Map<String, PageInfo> _pages = {};
@@ -51,7 +52,7 @@ class JsContainer {
       String page = info['page'].toString();
       PageInfo? pageInfo = _pages[page];
       pageInfo?.refreshCallback?.call();
-      debugPrint('刷新页面');
+      LogUtils.log('刷新页面');
     });
   }
 
@@ -94,11 +95,11 @@ class JsContainer {
 
   void _injectFunction() {
     flutterJs.onMessage('onInit', (dynamic args) {
-      debugPrint('bridge注入成功:$args');
+      LogUtils.log('bridge注入成功:$args');
     });
     flutterJs.onMessage('log', (dynamic args) {
       Map map = args as Map;
-      debugPrint('log-[DSL]:${map['message']}');
+      LogUtils.log('log-[DSL]:${map['message']}');
     });
     flutterJs.onMessage('alert', (dynamic args) {
       Map map = args as Map;

@@ -1,12 +1,11 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_dsl/src/js/js_container.dart';
 import 'package:flutter_dsl/src/obs/obs_Interface.dart';
 import 'package:flutter_js/flutter_js.dart';
 
 import '../obs/observer.dart';
 import '../obs/subject.dart';
+import '../utils/utils.dart';
 
 typedef LinkAction = void Function(dynamic link);
 
@@ -60,7 +59,7 @@ class JSPageChannel {
       dataObs[key] = obs;
     }
     obs.addObserver(s);
-    debugPrint('绑定[$key]和observer[${s.debugLabel}]的关系');
+    LogUtils.log('绑定[$key]和observer[${s.debugLabel}]的关系');
   }
 
   ///页面初始化
@@ -79,6 +78,10 @@ class JSPageChannel {
         
         setState:function() {
           sendMessage("setState",JSON.stringify({page:'$pageId',}));
+        },
+        
+        log:function(msg){
+          sendMessage("log",JSON.stringify({message: msg,}));
         },
         
         alert:function(text){
@@ -103,13 +106,13 @@ class JSPageChannel {
                 target.targetId = '__target__' + $pageId.objCount++
              }
              if (property != 'toJSON' && property != 'targetId' ) {
-                console.log(target.targetId + " 代理get:" + property);
+                 //console.log(target.targetId + " 代理get:" + property);
                 sendMessage("getData",JSON.stringify({page:'$pageId',target:target,key:property,targetId:target.targetId,}));
              }
              return target[property];
             },
             set:function(target,property,value){
-              console.log(target.targetId + " 代理set:"+property);
+               //console.log(target.targetId + " 代理set:"+property);
               sendMessage("setData",JSON.stringify({page:'$pageId',target:target,key:property,value:value,targetId:target.targetId,}));
               target[property] = value;
             }
@@ -120,7 +123,7 @@ class JSPageChannel {
       ''';
     //注入页面js
     JsEvalResult result = JsContainer.instance.evaluate(pageJs);
-    debugPrint('加载js代码:$result');
+    LogUtils.log('加载js代码:$result');
     if (result.stringResult == 'null') {
       hasInject = true;
       JsContainer.instance.evaluate('if($pageId.onLoad){$pageId.onLoad();}');
@@ -131,7 +134,7 @@ class JSPageChannel {
   ///处理表达式
   dynamic callExpression(String expression) {
     JsEvalResult result = JsContainer.instance.evaluate('(function(){return $pageId.$expression})()');
-    debugPrint('执行js代码$result');
+    LogUtils.log('执行js代码$result');
     return result.rawResult;
   }
 
@@ -147,7 +150,7 @@ class JSPageChannel {
       method = '$pageId.$method';
     }
     JsEvalResult result = JsContainer.instance.evaluate(method);
-    debugPrint('执行js代码$result');
+    LogUtils.log('执行js代码$result');
     return result.rawResult;
   }
 
@@ -163,7 +166,7 @@ class JSPageChannel {
       JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$pageId.$targetIdMethod }); })();');
       String jsonField = result.stringResult;
       Map map = jsonDecode(jsonField);
-      debugPrint('获取id');
+      LogUtils.log('获取id');
       return map['field'];
     }
     return null;
@@ -196,11 +199,11 @@ class JSPageChannel {
     //   key = '${targetId}__$key';
     //   __bindObs(key, ObsInterface.proxy!);
     // }
-    debugPrint('开始获取$field字段数据');
+    LogUtils.log('开始获取$field字段数据');
     JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$pageId.$field }); })();');
     String jsonField = result.stringResult;
     Map map = jsonDecode(jsonField);
-    debugPrint('返回$field的结果:${map['field']}');
+    LogUtils.log('返回$field的结果:${map['field']}');
     return map['field'];
   }
 

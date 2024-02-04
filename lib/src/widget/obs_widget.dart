@@ -25,7 +25,11 @@ class _ObsState<T extends Obs> extends State<T> {
   late Observer _observer;
 
   void _update() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    } else {
+      _observer.clear();
+    }
   }
 
   @override
@@ -88,7 +92,7 @@ class _ObsTextState extends _ObsState<ObsText> {
         if (matchedText != null) {
           dynamic c;
           if (widget.item != null) {
-            c = widget.item[matchedText];
+            c = (widget.item as Map).objectForKeyPath(matchedText);
           } else {
             c = jsCaller.getField(matchedText);
           }
@@ -98,5 +102,20 @@ class _ObsTextState extends _ObsState<ObsText> {
       return content;
     }
     return v;
+  }
+}
+
+extension MapExtension on Map {
+  dynamic objectForKeyPath(String keyPath) {
+    if (keyPath.contains('.')) {
+      dynamic value = this;
+      Iterator<String> keys = keyPath.split('.').iterator;
+      while (keys.moveNext()) {
+        String key = keys.current;
+        value = value[key];
+      }
+      return value;
+    }
+    return this[keyPath];
   }
 }

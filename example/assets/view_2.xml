@@ -2,16 +2,18 @@
 	<lazy-list-view style="background-color:#efefef;margin:140rpx;padding:24rpx;">
 		<column style="background-color:#f6f6f6;padding:20rpx;" cross-align="start">
 			<row>
-				<image style="width:80rpx;height:80rpx;" src="assets/user-default.png" ></image>
+				<image style="width:80rpx;height:80rpx;" src="assets/user-default.png"></image>
 				<column style="flex:1;margin: 0 0 0 20rpx;" cross-align="start">
 					<view style="color:#cecece;font-size:20rpx;">{{data.userInfo.name}}</view>
-					<text style="color:#ff00ff;font-size:14rpx;">超级会员<text style="color:#00ff00">{{data.userInfo.level}}</text>
+					<text style="color:#ff00ff;font-size:14rpx;">超级会员<text
+							style="color:#00ff00">{{data.userInfo.level}}</text>
 					</text>
 				</column>
 			</row>
 			<text style="color:#333;font-size:22rpx;font-weight:700;">我的订单</text>
 			<row>
-				<view v-for="(item,index) in data.orderMenu" style="margin:10rpx;padding:10rpx;border-radius:12rpx;background-color:#efefef;" >
+				<view v-for="(item,index) in data.orderMenu"
+					style="margin:10rpx;padding:10rpx;border-radius:12rpx;background-color:#efefef;">
 					{{item}}
 				</view>
 			</row>
@@ -19,8 +21,9 @@
 			<text style="color:#000000">{{data.state}}-{{data.userInfo.name}}</text>
 			<text style="color:#ff00ff;font-size:30rpx;" v-if="data.state==1">我显示了</text>
 		</column>
-		<column v-for="(item,index) in data.orderMenu">
-			<view style="color:#cecece;font-size:20rpx;">{{item}}</view>
+		<column v-for="(item,index) in data.dataList" style="color:#fff;" cross-align="start">
+			<view style="color:#cecece;font-size:20rpx;">{{item.title}}</view>
+			<view style="color:#cecece;font-size:20rpx;">价格:{{item.price}}</view>
 		</column>
 	</lazy-list-view>
 
@@ -37,6 +40,16 @@
 			orderMenu: ['全部订单', '已支付', '待支付'],
 			state: 0,
 			index: 0,
+			dataList: [{
+				title: '手电筒',
+				price: 10,
+			}, {
+				title: '手电筒',
+				price: 10,
+			}, {
+				title: '手电筒',
+				price: 10,
+			}],
 
 		}),
 		onLoad() {
@@ -49,13 +62,16 @@
 		changeState() {
 			if (this.data.state == 0) {
 				this.data.state = 1;
-				this.data.userInfo.name = '1111';
+				this.data.userInfo.name = '我被修改了';
 			} else {
 				this.data.state = 0;
-				this.data.userInfo.name = '0000';
+				this.data.userInfo.name = '我被还原了';
 			}
-			//   this.data.index++;
-			//   this.data.dataList.push('--' + this.data.index + '--')
+			this.data.index++;
+			this.data.dataList.push({
+				title: '新增的',
+				price: this.data.index,
+			})
 		},
 
 	}
