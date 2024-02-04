@@ -78,10 +78,11 @@ class JSPageChannel {
         setState:function() {
           sendMessage("setState",JSON.stringify({page:'$pageId',}));
         },
-        expression:function(expression){
-          console.log("expression:"+expression);
-          return expression;
+        
+        alert:function(text){
+          sendMessage("alert",JSON.stringify({text:text,}));
         },
+        
         ...$js
       };
      

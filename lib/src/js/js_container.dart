@@ -97,7 +97,11 @@ class JsContainer {
     });
     flutterJs.onMessage('log', (dynamic args) {
       Map map = args as Map;
-      debugPrint('DSL:${map['message']}');
+      debugPrint('log-[DSL]:${map['message']}');
+    });
+    flutterJs.onMessage('alert', (dynamic args) {
+      Map map = args as Map;
+      debugPrint('alert:${map['text']}');
     });
   }
 

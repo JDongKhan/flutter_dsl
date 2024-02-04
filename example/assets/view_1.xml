@@ -29,14 +29,14 @@
         console.log('onDestroy');
     },
    ok:function(args) {
-       alert('添加');
+       this.alert('添加');
        this.data.index++;
        this.data.title = "点击事件" + this.data.index;
        console.log('点击事件' + this.data.title);
        return args;
    },
    cancel:function(args) {
-       alert('取消');
+       this.alert('取消');
        this.data.index++;
        this.data.title2 = "点击事件" + this.data.index;
        return args;
