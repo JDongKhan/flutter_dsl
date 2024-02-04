@@ -83,15 +83,15 @@ abstract class FlutterDSLWidgetBuilder {
     BoxConstraints? constraints = (width != null || height != null) ? BoxConstraints.tightFor(width: width, height: height) : null;
     if (constraints != null) {
       child = ConstrainedBox(constraints: constraints, child: child);
-    } else if (flex != null) {
+    }
+    if (margin != null) {
+      child = Padding(padding: margin, child: child);
+    }
+    if (constraints == null && flex != null) {
       child = Expanded(
         flex: flex,
         child: child,
       );
-    }
-
-    if (margin != null) {
-      child = Padding(padding: margin, child: child);
     }
     return child;
   }
