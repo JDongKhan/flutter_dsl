@@ -1,6 +1,29 @@
-设计一款轻量级的解析DSL框架，暂时只是个设想
+设计一款轻量级的解析DSL框架
 支持如下自定义的页面以及js调用，适合一些做活动的页面
 
+该组件是直接从文件读取template下的数据动态组装成widget树，所以纯页面不存在跟js打交道，性能可以保证，如果使用了js代码，那就需要使用到jsbridge进行通信，如果不需要响应式问题也不大。  如果改变了某一个变量就要出发ui变化，这里用到了js的proxy，通过代码动态绑定和widget的关系以及监听变化刷新页面，那性能就不能保证了。
+
+从flutter获取数据注入到xml里面
+```dart
+      FlutterDSLWidget(
+        data: const {
+            'data': {
+              'title': "我来自dart（点我）",
+              'title2': "我来自dart（点我）",
+              'index': 0,
+            },
+          },
+        path: 'assets/view.xml',
+      );
+
+```
+
+如果需要从页面自己获取数据从无须传入data字段.
+```dart
+      FlutterDSLWidget(
+        path: 'assets/view.xml',
+      );
+```
 
 ```html
 
