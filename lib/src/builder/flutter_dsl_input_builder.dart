@@ -4,21 +4,10 @@ class FlutterDSLInputBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLInputBuilder();
 
   @override
-  Attribute createAttribute(XmlElement node) {
-    String? style = node.getAttribute('style');
-    return InputAttribute(style: style);
-  }
-
-  @override
   Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
-    Widget? child = children.isNotEmpty ? children.first : null;
-
-    String? click = node.getAttribute('click');
     String? placeholder = node.getAttribute('placeholder');
     Color? color = attribute?.getColorFromStyle('color');
     double? fontSize = attribute?.getDoubleFromStyle('font-size');
-
     return TextField(
       decoration: InputDecoration(
         hintText: placeholder,
@@ -31,8 +20,4 @@ class FlutterDSLInputBuilder extends FlutterDSLWidgetBuilder {
       ),
     );
   }
-}
-
-class InputAttribute extends Attribute {
-  InputAttribute({super.style});
 }

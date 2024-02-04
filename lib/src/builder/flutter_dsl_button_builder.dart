@@ -4,12 +4,6 @@ class FlutterDSLButtonBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLButtonBuilder();
 
   @override
-  Attribute createAttribute(XmlElement node) {
-    String? style = node.getAttribute('style');
-    return ButtonAttribute(style: style);
-  }
-
-  @override
   Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
     Widget? child = children.isNotEmpty ? children.first : null;
@@ -31,8 +25,4 @@ class FlutterDSLButtonBuilder extends FlutterDSLWidgetBuilder {
     );
     return widget;
   }
-}
-
-class ButtonAttribute extends Attribute {
-  ButtonAttribute({super.style});
 }

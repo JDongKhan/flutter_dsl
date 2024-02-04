@@ -4,12 +4,6 @@ class FlutterDSLImageBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLImageBuilder();
 
   @override
-  Attribute createAttribute(XmlElement node) {
-    String? style = node.getAttribute('style');
-    return ImageAttribute(style: style);
-  }
-
-  @override
   Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
     String? src = node.getAttribute('src');
     bool isHttp = src?.startsWith('http') ?? false;
@@ -32,8 +26,4 @@ class FlutterDSLImageBuilder extends FlutterDSLWidgetBuilder {
             height: height,
           );
   }
-}
-
-class ImageAttribute extends Attribute {
-  ImageAttribute({super.style});
 }

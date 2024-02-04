@@ -31,7 +31,7 @@ abstract class FlutterDSLWidgetBuilder {
   Widget _build(XmlElement node, JSPageChannel jsChannel, [dynamic item]) {
     //处理通用样式
     attribute = createAttribute(node);
-
+    //创建widget
     Widget child = createWidget(node, jsChannel, item);
     //字体颜色
     Color? color = attribute?.getColorFromStyle('color');
@@ -205,6 +205,7 @@ abstract class Attribute {
     if (value == 'bottomRight') {
       return Alignment.bottomRight;
     }
+    return null;
   }
 
   double? _handleDouble(String? value) {
