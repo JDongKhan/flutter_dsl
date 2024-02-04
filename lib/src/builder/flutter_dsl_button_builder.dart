@@ -4,17 +4,17 @@ class FlutterDSLButtonBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLButtonBuilder();
 
   @override
-  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsChannel, [dynamic item]) {
+    List<Widget> children = createChildren(node.children.iterator, jsChannel, item);
     Widget? child = children.isNotEmpty ? children.first : null;
     String? click = node.getAttribute('click');
     //点击事件
     onClick() {
       if (click != null) {
         if (click.contains(':') == true) {
-          jsCaller.onClick(click);
+          jsChannel.onClick(click);
         } else {
-          jsCaller.callJsMethod(click);
+          jsChannel.callJsMethod(click);
         }
       }
     }

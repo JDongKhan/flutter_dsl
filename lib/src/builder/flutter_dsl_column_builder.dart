@@ -4,8 +4,8 @@ class FlutterDSLColumnBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLColumnBuilder();
 
   @override
-  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsChannel, [dynamic item]) {
+    List<Widget> children = createChildren(node.children.iterator, jsChannel, item);
     String? mainAlign = node.getAttribute('main-align');
     String? crossAlign = node.getAttribute('cross-align');
     String? mainSize = node.getAttribute('mainSize');
@@ -32,7 +32,7 @@ class FlutterDSLColumnBuilder extends FlutterDSLWidgetBuilder {
 
     MainAxisSize mainAxisSize = MainAxisSize.max;
     if (mainSize != null) {
-      mainAxisSize = MainAxisSize.values.firstWhere((element) => element == mainSize);
+      mainAxisSize = MainAxisSize.values.firstWhere((element) => element.name == mainSize);
     }
 
     switch (crossAlign) {

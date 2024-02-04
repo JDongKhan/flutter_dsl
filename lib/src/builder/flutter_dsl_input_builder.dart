@@ -4,7 +4,7 @@ class FlutterDSLInputBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLInputBuilder();
 
   @override
-  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsChannel, [dynamic item]) {
     String? placeholder = node.getAttribute('placeholder');
     Color? color = attribute?.getColorFromStyle('color');
     double? fontSize = attribute?.getDoubleFromStyle('font-size');

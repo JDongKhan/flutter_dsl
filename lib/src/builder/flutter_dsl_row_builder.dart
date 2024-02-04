@@ -4,8 +4,8 @@ class FlutterDSLRowBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLRowBuilder();
 
   @override
-  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]) {
-    List<Widget> children = createChildren(node.children.iterator, jsCaller, item);
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsChannel, [dynamic item]) {
+    List<Widget> children = createChildren(node.children.iterator, jsChannel, item);
     String? mainAlign = node.getAttribute('main-align');
     String? crossAlign = node.getAttribute('cross-align');
     String? mainSize = node.getAttribute('mainSize');

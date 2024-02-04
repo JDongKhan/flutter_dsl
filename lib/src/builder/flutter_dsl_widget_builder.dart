@@ -97,10 +97,10 @@ abstract class FlutterDSLWidgetBuilder {
   }
 
   ///创建单个控件
-  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]);
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsChannel, [dynamic item]);
 
   ///处理子控件
-  List<Widget> createChildren(Iterator<XmlNode> nodeList, JSPageChannel jsCaller, dynamic item) {
+  List<Widget> createChildren(Iterator<XmlNode> nodeList, JSPageChannel jsChannel, dynamic item) {
     List<Widget> list = [];
     while (nodeList.moveNext()) {
       XmlNode node = nodeList.current;
@@ -115,7 +115,7 @@ abstract class FlutterDSLWidgetBuilder {
               debugLabel: 'children($v)',
               content: v,
               item: item,
-              jsChannel: jsCaller,
+              jsChannel: jsChannel,
               builder: (context, newV) => Text(newV ?? 'null'),
             ),
           );
@@ -125,7 +125,7 @@ abstract class FlutterDSLWidgetBuilder {
       } else if (node is XmlElement) {
         String nodeName = node.name.local;
         FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-        Widget? widget = builder?.build(node, jsCaller, item);
+        Widget? widget = builder?.build(node, jsChannel, item);
         if (widget != null) {
           list.add(widget);
         }
@@ -253,8 +253,9 @@ abstract class Attribute {
       for (int i = 0; i < value.length; i++) {
         newColorStr += value[i] + value[i];
       }
-      value = newColorStr;
+      value = 'ff$newColorStr';
     }
+    assert(value.length == 8, '颜色#$value格式不正确');
     return Color(int.parse(value, radix: 16));
   }
 

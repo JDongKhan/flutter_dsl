@@ -1,6 +1,6 @@
 <template>
 	<lazy-list-view style="background-color:#efefef;margin:140rpx;padding:24rpx;">
-		<column style="background-color:#f6f6f6;">
+		<column style="background-color:#f6f6f6;padding:20rpx;" cross-align="start">
 			<row>
 				<image style="width:80rpx;height:80rpx;" src="assets/user-default.png" ></image>
 				<column style="flex:1;margin: 0 0 0 20rpx;" cross-align="start">
@@ -8,6 +8,10 @@
 					<text style="color:#ff00ff;font-size:14rpx;">超级会员<text style="color:#00ff00">{{data.userInfo.level}}</text>
 					</text>
 				</column>
+			</row>
+			<text style="color:#333;font-size:22rpx;font-weight:700;">我的订单</text>
+			<row>
+				<view v-for="(item,index) in data.orderMenu">222</view>
 			</row>
 			<button click="changeState">切换状态</button>
 			<text style="color:#000000">{{data.state}}-{{data.userInfo.name}}</text>

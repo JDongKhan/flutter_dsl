@@ -18,7 +18,7 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
   }
 
   ///处理子控件
-  List<Widget> createSlivers(Iterator<XmlNode> nodeList, JSPageChannel jsCaller, dynamic item) {
+  List<Widget> createSlivers(Iterator<XmlNode> nodeList, JSPageChannel jsChannel, dynamic item) {
     List<Widget> list = [];
     while (nodeList.moveNext()) {
       XmlNode node = nodeList.current;
@@ -31,12 +31,12 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
         String nodeName = node.name.local;
         String? vFor = node.getAttribute('v-for');
         if (vFor != null) {
-          list.add(_buildSliverList(node, nodeName, vFor, jsCaller));
+          list.add(_buildSliverList(node, nodeName, vFor, jsChannel));
           continue;
         }
 
         FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-        Widget? widget = builder?.build(node, jsCaller, item);
+        Widget? widget = builder?.build(node, jsChannel, item);
         if (widget != null) {
           list.add(SliverToBoxAdapter(
             child: widget,
@@ -47,7 +47,7 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
     return list;
   }
 
-  Widget _buildSliverList(XmlElement node, String nodeName, String vFor, JSPageChannel jsCaller) {
+  Widget _buildSliverList(XmlElement node, String nodeName, String vFor, JSPageChannel jsChannel) {
     List array = vFor.split(' in ');
     String field = array[1].trim();
     String item = array[0];
@@ -62,7 +62,7 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
     } else if (items.length == 1) {
       itemKey = items[0];
     }
-    List dataList = jsCaller.getField(field) ?? [];
+    List dataList = jsChannel.getField(field) ?? [];
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (c, index) {
@@ -75,7 +75,7 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
             data[indexKey] = index;
           }
           FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-          Widget? widget = builder?.build(node, jsCaller, data);
+          Widget? widget = builder?.build(node, jsChannel, data);
           return widget;
         },
         childCount: dataList.length ?? 0,

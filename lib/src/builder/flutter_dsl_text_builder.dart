@@ -9,8 +9,13 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
     double? fontSize = attribute.getDoubleFromStyle('font-size');
+    int? fw = attribute.getIntFromStyle('font-weight');
     String? v = node.innerXml;
 
+    FontWeight? fontWeight;
+    if (fw != null) {
+      fontWeight = FontWeight.values.firstWhere((element) => element.value == fw, orElse: () => FontWeight.normal);
+    }
     builder(Iterator<XmlNode> nodeList) {
       return RichText(
         text: TextSpan(
@@ -18,6 +23,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
           style: TextStyle(
             color: color,
             fontSize: fontSize,
+            fontWeight: fontWeight,
           ),
         ),
       );
@@ -42,7 +48,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     return widget;
   }
 
-  List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList, JSPageChannel jsCaller) {
+  List<TextSpan> _createTextSpans(Iterator<XmlNode> nodeList, JSPageChannel jsChannel) {
     List<TextSpan> children = [];
     while (nodeList.moveNext()) {
       XmlNode node = nodeList.current;
@@ -53,13 +59,13 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
         }
         children.add(TextSpan(text: v));
       } else if (node is XmlElement) {
-        children.add(_createChildTextSpan(node, jsCaller));
+        children.add(_createChildTextSpan(node, jsChannel));
       }
     }
     return children;
   }
 
-  TextSpan _createChildTextSpan(XmlElement node, JSPageChannel jsCaller) {
+  TextSpan _createChildTextSpan(XmlElement node, JSPageChannel jsChannel) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
@@ -67,7 +73,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     if (color != null) {
       textStyle = TextStyle(color: color);
     }
-    return TextSpan(text: null, children: _createTextSpans(node.children.iterator, jsCaller), style: textStyle);
+    return TextSpan(text: null, children: _createTextSpans(node.children.iterator, jsChannel), style: textStyle);
   }
 }
 
