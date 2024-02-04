@@ -162,8 +162,16 @@ abstract class FlutterDSLWidgetBuilder {
     }
     List dataList = jsChannel.getField(field) ?? [];
     List<Widget> widgetList = [];
-    for (var element in dataList) {
-      Widget? widget = _buildOneWidget(node, jsChannel, element);
+    for (var index = 0; index < dataList.length; index++) {
+      var element = dataList[index];
+      Map data = {};
+      if (itemKey != null) {
+        data[itemKey] = element;
+      }
+      if (indexKey != null) {
+        data[indexKey] = index;
+      }
+      Widget? widget = _buildOneWidget(node, jsChannel, data);
       if (widget != null) {
         widgetList.add(widget);
       }

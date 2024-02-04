@@ -11,7 +11,9 @@
 			</row>
 			<text style="color:#333;font-size:22rpx;font-weight:700;">我的订单</text>
 			<row>
-				<view v-for="(item,index) in data.orderMenu">222</view>
+				<view v-for="(item,index) in data.orderMenu" style="margin:10rpx;padding:10rpx;border-radius:12rpx;background-color:#efefef;" >
+					{{item}}
+				</view>
 			</row>
 			<button click="changeState">切换状态</button>
 			<text style="color:#000000">{{data.state}}-{{data.userInfo.name}}</text>
