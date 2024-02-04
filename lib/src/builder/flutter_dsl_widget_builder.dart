@@ -4,6 +4,7 @@ abstract class FlutterDSLWidgetBuilder {
   FlutterDSLWidgetBuilder();
   Attribute? attribute;
 
+  ///创建属性
   Attribute? createAttribute(XmlElement node) {
     String? style = node.getAttribute('style');
     if (style == null) {
