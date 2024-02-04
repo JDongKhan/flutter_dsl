@@ -28,15 +28,12 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
           continue;
         }
       } else if (node is XmlElement) {
-        String nodeName = node.name.local;
         String? vFor = node.getAttribute('v-for');
         if (vFor != null) {
-          list.add(_buildSliverList(node, nodeName, vFor, jsChannel));
+          list.add(_buildSliverList(node, vFor, jsChannel));
           continue;
         }
-
-        FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-        Widget? widget = builder?.build(node, jsChannel, item);
+        Widget? widget = _buildOneWidget(node, jsChannel, item);
         if (widget != null) {
           list.add(SliverToBoxAdapter(
             child: widget,
@@ -47,7 +44,8 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
     return list;
   }
 
-  Widget _buildSliverList(XmlElement node, String nodeName, String vFor, JSPageChannel jsChannel) {
+  Widget _buildSliverList(XmlElement node, String vFor, JSPageChannel jsChannel) {
+    String nodeName = node.name.local;
     List array = vFor.split(' in ');
     String field = array[1].trim();
     String item = array[0];

@@ -123,15 +123,52 @@ abstract class FlutterDSLWidgetBuilder {
           list.add(Text(v));
         }
       } else if (node is XmlElement) {
-        String nodeName = node.name.local;
-        FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
-        Widget? widget = builder?.build(node, jsChannel, item);
-        if (widget != null) {
-          list.add(widget);
+        String? vFor = node.getAttribute('v-for');
+        if (vFor != null) {
+          list.addAll(_buildList(node, vFor, jsChannel));
+        } else {
+          Widget? widget = _buildOneWidget(node, jsChannel, item);
+          if (widget != null) {
+            list.add(widget);
+          }
         }
       }
     }
     return list;
+  }
+
+  Widget? _buildOneWidget(XmlElement node, JSPageChannel jsChannel, dynamic item) {
+    String nodeName = node.name.local;
+    FlutterDSLWidgetBuilder? builder = mappingBuilder[nodeName];
+    Widget? widget = builder?.build(node, jsChannel, item);
+    return widget;
+  }
+
+  List<Widget> _buildList(XmlElement node, String vFor, JSPageChannel jsChannel) {
+    String nodeName = node.name.local;
+    List array = vFor.split(' in ');
+    String field = array[1].trim();
+    String item = array[0];
+    item = item.replaceAll("(", "");
+    item = item.replaceAll(")", "");
+    List items = item.split(',');
+    String? itemKey;
+    String? indexKey;
+    if (items.length == 2) {
+      itemKey = items[0];
+      indexKey = items[1];
+    } else if (items.length == 1) {
+      itemKey = items[0];
+    }
+    List dataList = jsChannel.getField(field) ?? [];
+    List<Widget> widgetList = [];
+    for (var element in dataList) {
+      Widget? widget = _buildOneWidget(node, jsChannel, element);
+      if (widget != null) {
+        widgetList.add(widget);
+      }
+    }
+    return widgetList;
   }
 }
 

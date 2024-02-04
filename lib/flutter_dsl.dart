@@ -3,6 +3,7 @@ library flutter_dsl;
 import 'dart:collection';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dsl/src/js/unique_key_generator.dart';
 import 'package:flutter_dsl/src/obs/obs_Interface.dart';
