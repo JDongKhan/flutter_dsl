@@ -65,18 +65,31 @@ class _MyHomePageState extends State<MyHomePage> {
           linkAction: (dynamic link) {
             if (link == 'platform://gotoNextForm') {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const NextPage(
-                            asset: 'assets/view_1.xml',
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NextPage(
+                    asset: 'assets/view_1.xml',
+                  ),
+                ),
+              );
             } else if (link == 'platform://gotoNextList') {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (_) => const NextPage(
-                            asset: 'assets/view_2.xml',
-                          )));
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NextPage(
+                    asset: 'assets/view_2.xml',
+                  ),
+                ),
+              );
+            } else if (link == 'platform://gotoNextSingle') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const NextPage(
+                    asset: 'assets/view_3.xml',
+                  ),
+                ),
+              );
             }
           },
         ),

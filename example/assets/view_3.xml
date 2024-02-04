@@ -1,0 +1,37 @@
+<template>
+    <column style="background-color:#f6f6f6;" main-align="center" cross-align="center">
+        <button click="changeState">切换状态</button>
+        <view style="color:#000000">{{data.state}}-{{data.userInfo.name}}</view>
+        <text style="color:#ff00ff;font-size:30rpx;" v-if="data.state==1">我显示了</text>
+    </column>
+</template>
+
+<script>
+{
+    data:reactive({
+        state: 0,
+        index:0,
+        userInfo: {
+           name:'2222'
+        },
+    }),
+    onLoad(){
+        console.log('onLoad');
+    },
+    onDestroy(){
+        console.log('onDestroy');
+    },
+
+    changeState(){
+        if (this.data.state == 0){
+            this.data.state = 1;
+            this.data.userInfo.name = '1111';
+        } else {
+            this.data.state = 0;
+            this.data.userInfo.name = '0000';
+        }
+    },
+
+}
+
+</script>

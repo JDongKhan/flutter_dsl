@@ -40,6 +40,7 @@ class JSPageChannel {
 
   ///数据建立关系
   void getData(dynamic target, String targetId, String key) {
+    // debugPrint('从js进入到dart层');
     Observer? s = ObsInterface.proxy;
     if (s == null) {
       return;
@@ -59,7 +60,7 @@ class JSPageChannel {
       dataObs[key] = obs;
     }
     obs.addObserver(s);
-    debugPrint('绑定$key和组件的关系');
+    debugPrint('绑定[$key]和observer[${s.debugLabel}]的关系');
   }
 
   ///页面初始化
@@ -91,22 +92,24 @@ class JSPageChannel {
       
           for (let i in value) {
             let v = value[i]
-            console.log(i + ':' + typeof v)
+            // console.log(i + ':' + typeof v)
             if (typeof v === 'object'){
               value[i] = reactive(v)
             }
           }
          const handler = {
             get:function(target,property){
-             console.log("代理get:"+property);
              if (typeof target.targetId === 'undefined') {
                 target.targetId = '__target__' + $pageId.objCount++
              }
-             sendMessage("getData",JSON.stringify({page:'$pageId',target:target,key:property,targetId:target.targetId,}));
+             if (property != 'toJSON' && property != 'targetId' ) {
+                console.log(target.targetId + " 代理get:" + property);
+                sendMessage("getData",JSON.stringify({page:'$pageId',target:target,key:property,targetId:target.targetId,}));
+             }
              return target[property];
             },
             set:function(target,property,value){
-              console.log("代理set:"+property);
+              console.log(target.targetId + " 代理set:"+property);
               sendMessage("setData",JSON.stringify({page:'$pageId',target:target,key:property,value:value,targetId:target.targetId,}));
               target[property] = value;
             }
@@ -193,11 +196,11 @@ class JSPageChannel {
     //   key = '${targetId}__$key';
     //   __bindObs(key, ObsInterface.proxy!);
     // }
-
+    debugPrint('开始获取$field字段数据');
     JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$pageId.$field }); })();');
     String jsonField = result.stringResult;
     Map map = jsonDecode(jsonField);
-    debugPrint('执行js代码$result');
+    debugPrint('返回$field的结果:${map['field']}');
     return map['field'];
   }
 

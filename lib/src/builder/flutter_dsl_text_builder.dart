@@ -26,7 +26,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     Widget widget;
     if (v.contains('{{') && v.contains('}}')) {
       widget = ObsText(
-          debugLabel: 'text',
+          debugLabel: 'text($v)',
           content: v,
           item: item,
           jsChannel: jsCaller,

@@ -18,7 +18,7 @@ abstract class FlutterDSLWidgetBuilder {
     String? vIf = node.getAttribute('v-if');
     if (vIf != null) {
       return Obs(
-        debugLabel: 'if',
+        debugLabel: 'if($vIf)',
         jsChannel: jsChannel,
         builder: (context, result) {
           bool result = jsChannel.callExpression(vIf);
@@ -107,7 +107,7 @@ abstract class FlutterDSLWidgetBuilder {
         if (v.contains('{{') && v.contains('}}')) {
           list.add(
             ObsText(
-              debugLabel: 'children',
+              debugLabel: 'children($v)',
               content: v,
               item: item,
               jsChannel: jsCaller,

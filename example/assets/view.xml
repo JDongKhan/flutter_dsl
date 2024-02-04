@@ -4,6 +4,7 @@
         <text style="color:#ff00ff;font-size:30rpx;">2222 <text style="color:#00ff00">3333{{data.index}}</text> </text>
         <button click="platform://gotoNextList">跳转到列表页</button>
         <button click="platform://gotoNextForm">跳转到表单页</button>
+        <button click="platform://gotoNextSingle">跳转到单个组件页</button>
         <image style="width:200rpx;height:200rpx;" src="assets/1.png"></image>
         <row main-align="end" cross-align="center">
             <view style="width:100rpx;height:100rpx;background-color:#00ff00;"></view>
