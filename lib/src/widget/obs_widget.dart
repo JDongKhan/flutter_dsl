@@ -4,11 +4,11 @@ import 'package:flutter_dsl/src/obs/obs_Interface.dart';
 import '../js/js_page_channel.dart';
 import '../obs/observer.dart';
 
-typedef ValueBuilder = Widget Function(dynamic value);
+typedef ValueBuilder = Widget Function(BuildContext context, dynamic value);
 
 class Obs extends StatefulWidget {
   final JSPageChannel jsChannel;
-  final WidgetBuilder builder;
+  final ValueBuilder builder;
   final String? debugLabel;
   const Obs({
     super.key,
@@ -18,10 +18,10 @@ class Obs extends StatefulWidget {
   });
 
   @override
-  State<Obs> createState() => _ObsState();
+  State<Obs> createState() => _ObsState<Obs>();
 }
 
-class _ObsState extends State<Obs> {
+class _ObsState<T extends Obs> extends State<T> {
   late Observer _observer;
 
   void _update() {
@@ -36,12 +36,15 @@ class _ObsState extends State<Obs> {
 
   @override
   Widget build(BuildContext context) {
-    return ObsInterface.notifyChildren(_observer, () => _buildChild());
+    return ObsInterface.notifyChildren(_observer, () => _buildChild(context));
   }
 
-  Widget _buildChild() {
+  Widget _buildChild(BuildContext context) {
     _observer.clear();
-    return widget.builder(context);
+    return widget.builder(
+      context,
+      null,
+    );
   }
 
   @override
@@ -51,48 +54,28 @@ class _ObsState extends State<Obs> {
   }
 }
 
-class ObsWidget extends StatefulWidget {
-  final JSPageChannel jsChannel;
-  final ValueBuilder builder;
+class ObsText extends Obs {
   final dynamic item;
   final String content;
-  final String? debugLabel;
-  const ObsWidget({
+  const ObsText({
     super.key,
     required this.content,
-    required this.jsChannel,
-    required this.builder,
-    this.debugLabel,
+    required super.jsChannel,
+    required super.builder,
+    super.debugLabel,
     this.item,
   });
 
   @override
-  State<ObsWidget> createState() => _ObsWidgetState();
+  State<ObsText> createState() => _ObsTextState();
 }
 
-class _ObsWidgetState extends State<ObsWidget> {
-  late Observer _observer;
-
+class _ObsTextState extends _ObsState<ObsText> {
   @override
-  void initState() {
-    _observer = Observer(_update, widget.jsChannel, widget.debugLabel);
-    super.initState();
-  }
-
-  void _update() {
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ObsInterface.notifyChildren(_observer, () => _buildChild());
-  }
-
-  Widget _buildChild() {
+  Widget _buildChild(BuildContext context) {
     _observer.clear();
-    var d = ObsInterface.proxy;
     String? v = parserText(widget.content, widget.jsChannel);
-    return widget.builder(v);
+    return widget.builder(context, v);
   }
 
   String? parserText(String v, JSPageChannel jsCaller) {
@@ -115,58 +98,5 @@ class _ObsWidgetState extends State<ObsWidget> {
       return content;
     }
     return v;
-  }
-
-  @override
-  void dispose() {
-    _observer.clear();
-    super.dispose();
-  }
-}
-
-class Obs2 extends StatefulWidget {
-  final ValueBuilder builder;
-  final JSPageChannel jsChannel;
-  final String vIf;
-  final String? debugLabel;
-  const Obs2({
-    super.key,
-    required this.jsChannel,
-    required this.builder,
-    required this.vIf,
-    this.debugLabel,
-  });
-
-  @override
-  State<Obs2> createState() => _Obs2State();
-}
-
-class _Obs2State extends State<Obs2> {
-  late Observer _observer;
-
-  @override
-  void initState() {
-    _observer = Observer(_update, widget.jsChannel, widget.debugLabel);
-    super.initState();
-  }
-
-  void _update() {
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ObsInterface.notifyChildren(_observer, () => _build());
-  }
-
-  Widget _build() {
-    bool result = widget.jsChannel.callExpression(widget.vIf);
-    return widget.builder(result);
-  }
-
-  @override
-  void dispose() {
-    _observer.clear();
-    super.dispose();
   }
 }

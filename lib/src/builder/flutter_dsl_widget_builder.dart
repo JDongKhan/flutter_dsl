@@ -7,17 +7,16 @@ abstract class FlutterDSLWidgetBuilder {
   Widget build(XmlElement node, JSPageChannel jsChannel, [dynamic item]) {
     String? vIf = node.getAttribute('v-if');
     if (vIf != null) {
-      return Obs2(
+      return Obs(
         debugLabel: 'if',
         jsChannel: jsChannel,
-        builder: (result) {
+        builder: (context, result) {
           bool result = jsChannel.callExpression(vIf);
           if (!result) {
             return const SizedBox.shrink();
           }
           return _build(node, jsChannel, item);
         },
-        vIf: vIf,
       );
     }
     return _build(node, jsChannel, item);
@@ -102,12 +101,12 @@ abstract class FlutterDSLWidgetBuilder {
         }
         if (v.contains('{{') && v.contains('}}')) {
           list.add(
-            ObsWidget(
+            ObsText(
               debugLabel: 'children',
               content: v,
               item: item,
               jsChannel: jsCaller,
-              builder: (newV) => Text(newV ?? 'null'),
+              builder: (context, newV) => Text(newV ?? 'null'),
             ),
           );
         } else {

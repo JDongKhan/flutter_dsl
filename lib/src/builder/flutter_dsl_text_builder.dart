@@ -25,14 +25,14 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
 
     Widget widget;
     if (v.contains('{{') && v.contains('}}')) {
-      widget = ObsWidget(
+      widget = ObsText(
           debugLabel: 'text',
           content: v,
           item: item,
           jsChannel: jsCaller,
-          builder: (context) {
-            node.treatedString = context;
-            XmlDocumentFragment document = XmlDocumentFragment.parse(context);
+          builder: (context, value) {
+            node.treatedString = value;
+            XmlDocumentFragment document = XmlDocumentFragment.parse(value);
             return builder(document.children.iterator);
           });
     } else {
