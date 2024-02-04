@@ -11,10 +11,10 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     double? fontSize = attribute.getDoubleFromStyle('font-size');
     String? v = node.innerXml;
 
-    builder() {
+    builder(Iterator<XmlNode> nodeList) {
       return RichText(
         text: TextSpan(
-          children: _createTextSpans(node.children.iterator, jsCaller),
+          children: _createTextSpans(nodeList, jsCaller),
           style: TextStyle(
             color: color,
             fontSize: fontSize,
@@ -31,11 +31,12 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
           item: item,
           jsChannel: jsCaller,
           builder: (context) {
-            node.innerXml = context;
-            return builder();
+            node.treatedString = context;
+            XmlDocumentFragment document = XmlDocumentFragment.parse(context);
+            return builder(document.children.iterator);
           });
     } else {
-      widget = builder();
+      widget = builder(node.children.iterator);
     }
 
     return NodeData(
@@ -75,4 +76,10 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
 
 class TextAttribute extends Attribute {
   TextAttribute({super.style});
+}
+
+extension CustomXmlStringExtension on XmlNode {
+  static final _treatedString = Expando<String>();
+  String? get treatedString => _treatedString[this];
+  set treatedString(String? x) => _treatedString[this] = x;
 }

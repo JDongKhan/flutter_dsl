@@ -63,7 +63,21 @@ class _MyHomePageState extends State<MyHomePage> {
           },
           path: 'assets/view.xml',
           linkAction: (dynamic link) {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
+            if (link == 'platform://gotoNextForm') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const NextPage(
+                            asset: 'assets/view_1.xml',
+                          )));
+            } else if (link == 'platform://gotoNextList') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const NextPage(
+                            asset: 'assets/view_2.xml',
+                          )));
+            }
           },
         ),
       ), // This trailing comma makes auto-formatting nicer for build methods.
@@ -72,16 +86,14 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class NextPage extends StatelessWidget {
-  const NextPage({super.key});
+  final String asset;
+  const NextPage({super.key, required this.asset});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: FlutterDSLWidget(
-        path: 'assets/view_2.xml',
-        linkAction: (dynamic link) {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const NextPage()));
-        },
+        path: asset,
       ),
     );
   }

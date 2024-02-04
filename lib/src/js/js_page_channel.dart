@@ -184,13 +184,13 @@ class JSPageChannel {
       return value;
     }
 
-    String? targetId = getTargetIdForField(field);
-    if (targetId != null && ObsInterface.proxy != null) {
-      int lastIndex = field.lastIndexOf('.');
-      String key = field.substring(lastIndex + 1);
-      key = '${targetId}__$key';
-      __bindObs(key, ObsInterface.proxy!);
-    }
+    // String? targetId = getTargetIdForField(field);
+    // if (targetId != null && ObsInterface.proxy != null) {
+    //   int lastIndex = field.lastIndexOf('.');
+    //   String key = field.substring(lastIndex + 1);
+    //   key = '${targetId}__$key';
+    //   __bindObs(key, ObsInterface.proxy!);
+    // }
 
     JsEvalResult result = JsContainer.instance.evaluate('(()=>{return JSON.stringify({field:$pageId.$field }); })();');
     String jsonField = result.stringResult;
