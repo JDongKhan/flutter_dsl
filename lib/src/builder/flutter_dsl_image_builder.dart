@@ -4,7 +4,7 @@ class FlutterDSLImageBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLImageBuilder();
 
   @override
-  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]) {
     String? src = node.getAttribute('src');
     bool isHttp = src?.startsWith('http') ?? false;
 

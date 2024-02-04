@@ -4,7 +4,7 @@ class FlutterDSLLazyListViewBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLLazyListViewBuilder();
 
   @override
-  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]) {
     return Obs(
       debugLabel: 'lazyListView',
       jsChannel: jsCaller,

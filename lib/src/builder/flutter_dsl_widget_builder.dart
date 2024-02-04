@@ -2,7 +2,6 @@ part of '../../flutter_dsl.dart';
 
 abstract class FlutterDSLWidgetBuilder {
   FlutterDSLWidgetBuilder();
-  Attribute? attribute;
 
   ///创建属性
   Attribute? createAttribute(XmlElement node) {
@@ -34,13 +33,14 @@ abstract class FlutterDSLWidgetBuilder {
 
   Widget _build(XmlElement node, JSPageChannel jsChannel, [dynamic item]) {
     //处理通用样式
-    attribute = createAttribute(node);
+    Attribute? attribute = createAttribute(node);
     //创建widget
-    Widget child = createWidget(node, jsChannel, item);
+    Widget child = createWidget(node, attribute, jsChannel, item);
     //字体颜色
     Color? color = attribute?.getColorFromStyle('color');
     double? fontSize = attribute?.getDoubleFromStyle('font-size');
     String? fontFamily = attribute?.getStyle('font-family');
+    int? flex = attribute?.getIntFromStyle('flex');
     Alignment? alignment = attribute?.getAlignment("alignment");
     //字体颜色
     if (color != null || fontSize != null) {
@@ -83,6 +83,11 @@ abstract class FlutterDSLWidgetBuilder {
     BoxConstraints? constraints = (width != null || height != null) ? BoxConstraints.tightFor(width: width, height: height) : null;
     if (constraints != null) {
       child = ConstrainedBox(constraints: constraints, child: child);
+    } else if (flex != null) {
+      child = Expanded(
+        flex: flex,
+        child: child,
+      );
     }
 
     if (margin != null) {
@@ -92,7 +97,7 @@ abstract class FlutterDSLWidgetBuilder {
   }
 
   ///创建单个控件
-  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]);
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsCaller, [dynamic item]);
 
   ///处理子控件
   List<Widget> createChildren(Iterator<XmlNode> nodeList, JSPageChannel jsCaller, dynamic item) {
@@ -172,6 +177,14 @@ abstract class Attribute {
   double? getDoubleFromStyle(String key) {
     String? value = getStyle(key);
     return _handleDouble(value);
+  }
+
+  int? getIntFromStyle(String key) {
+    String? value = getStyle(key);
+    if (value == null) {
+      return null;
+    }
+    return int.tryParse(value);
   }
 
   EdgeInsets? getEdgeFromStyle(String key) {
@@ -267,7 +280,7 @@ abstract class Attribute {
       double d1 = _handleDouble(numbers[0]) ?? 0;
       double d2 = _handleDouble(numbers[1]) ?? 0;
       double d3 = _handleDouble(numbers[2]) ?? 0;
-      double d4 = _handleDouble(numbers[2]) ?? 0;
+      double d4 = _handleDouble(numbers[3]) ?? 0;
       edgeInsets = EdgeInsets.only(top: d1, right: d2, bottom: d3, left: d4);
     }
     return edgeInsets;

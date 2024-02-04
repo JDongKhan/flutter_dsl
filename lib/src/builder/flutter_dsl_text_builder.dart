@@ -4,7 +4,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
   FlutterDSLTextBuilder();
 
   @override
-  Widget createWidget(XmlElement node, JSPageChannel jsCaller, [dynamic item]) {
+  Widget createWidget(XmlElement node, Attribute? attribute, JSPageChannel jsChannel, [dynamic item]) {
     String? style = node.getAttribute('style');
     TextAttribute attribute = TextAttribute(style: style);
     Color? color = attribute.getColorFromStyle('color');
@@ -14,7 +14,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
     builder(Iterator<XmlNode> nodeList) {
       return RichText(
         text: TextSpan(
-          children: _createTextSpans(nodeList, jsCaller),
+          children: _createTextSpans(nodeList, jsChannel),
           style: TextStyle(
             color: color,
             fontSize: fontSize,
@@ -29,7 +29,7 @@ class FlutterDSLTextBuilder extends FlutterDSLWidgetBuilder {
           debugLabel: 'text($v)',
           content: v,
           item: item,
-          jsChannel: jsCaller,
+          jsChannel: jsChannel,
           builder: (context, value) {
             node.treatedString = value;
             XmlDocumentFragment document = XmlDocumentFragment.parse(value);
