@@ -10,6 +10,7 @@ import '../obs/subject.dart';
 
 typedef LinkAction = void Function(dynamic link);
 
+///单页面通道
 class JSPageChannel {
   dynamic data;
   JSPageChannel(this.data);

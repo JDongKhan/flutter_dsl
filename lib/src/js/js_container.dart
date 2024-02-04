@@ -4,6 +4,7 @@ import 'package:flutter_js/flutter_js.dart';
 typedef SetDataAction = void Function(dynamic target, String? targetId, String key, dynamic value);
 typedef GetDataAction = void Function(dynamic target, String targetId, String key);
 
+///JS容器
 class JsContainer {
   static JsContainer? _instance;
   JsContainer._() {
