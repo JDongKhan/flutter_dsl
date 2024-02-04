@@ -4,8 +4,11 @@ abstract class FlutterDSLWidgetBuilder {
   FlutterDSLWidgetBuilder();
   Attribute? attribute;
 
-  Attribute createAttribute(XmlElement node) {
+  Attribute? createAttribute(XmlElement node) {
     String? style = node.getAttribute('style');
+    if (style == null) {
+      return null;
+    }
     return ViewAttribute(style: style);
   }
 
@@ -134,24 +137,26 @@ abstract class Attribute {
   Map<String, String>? _styles;
 
   Attribute({this.style}) {
-    Map<String, String> map = HashMap();
-    List<String>? strArr = style?.split(';');
-    if (strArr != null) {
-      for (var element in strArr) {
-        if (element.isEmpty) {
-          continue;
-        }
-        List p = element.split(':');
-        if (p.length != 2) {
-          debugPrint('{$style}  里面的 "$element" 异常');
-        } else {
-          String key = p[0];
-          String value = p[1];
-          map[key] = value;
+    if (style != null) {
+      Map<String, String> map = HashMap();
+      List<String>? strArr = style?.split(';');
+      if (strArr != null) {
+        for (var element in strArr) {
+          if (element.isEmpty) {
+            continue;
+          }
+          List p = element.split(':');
+          if (p.length != 2) {
+            debugPrint('{$style}  里面的 "$element" 异常');
+          } else {
+            String key = p[0];
+            String value = p[1];
+            map[key] = value;
+          }
         }
       }
+      _styles = map;
     }
-    _styles = map;
   }
 
   String? getStyle(String key) {
