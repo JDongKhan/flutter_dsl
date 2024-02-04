@@ -138,6 +138,12 @@ class JSPageChannel {
     return result.rawResult;
   }
 
+  ///给js端赋值
+  void setFieldData(String expression, String data) {
+    JsEvalResult result = JsContainer.instance.evaluate("$pageId.$expression = '${data.toString()}'; ");
+    LogUtils.log('执行js代码$result');
+  }
+
   ///调用js方法
   dynamic callJsMethod(String method, [List? args]) {
     if (!method.contains('(')) {

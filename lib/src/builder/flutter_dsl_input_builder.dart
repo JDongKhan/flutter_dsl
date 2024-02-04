@@ -8,7 +8,13 @@ class FlutterDSLInputBuilder extends FlutterDSLWidgetBuilder {
     String? placeholder = node.getAttribute('placeholder');
     Color? color = attribute?.getColorFromStyle('color');
     double? fontSize = attribute?.getDoubleFromStyle('font-size');
+    String? vModel = node.getAttribute('v-model');
     return TextField(
+      onChanged: (v) {
+        if (vModel != null) {
+          jsChannel.setFieldData(vModel, v);
+        }
+      },
       decoration: InputDecoration(
         hintText: placeholder,
         hintStyle: TextStyle(color: color, fontSize: fontSize),

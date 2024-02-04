@@ -1,5 +1,5 @@
 class LogUtils {
-  static bool isLoggable = false;
+  static bool isLoggable = true;
 
   static void log(String message) {
     if (isLoggable) {

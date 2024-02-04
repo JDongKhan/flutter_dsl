@@ -55,8 +55,8 @@ abstract class FlutterDSLWidgetBuilder {
     Color? foregroundColor = attribute?.getColorFromStyle('foregroundColor');
     //圆角
     double? borderRadius = attribute?.getDoubleFromStyle('border-radius');
-    EdgeInsets? padding = attribute?.getEdgeFromStyle("padding");
-    EdgeInsets? margin = attribute?.getEdgeFromStyle('margin');
+    EdgeInsets? padding = attribute?.getPadding();
+    EdgeInsets? margin = attribute?.getMargin();
 
     if (alignment != null) {
       child = Align(alignment: alignment, child: child);
@@ -145,7 +145,6 @@ abstract class FlutterDSLWidgetBuilder {
   }
 
   List<Widget> _buildList(XmlElement node, String vFor, JSPageChannel jsChannel) {
-    String nodeName = node.name.local;
     List array = vFor.split(' in ');
     String field = array[1].trim();
     String item = array[0];
@@ -230,6 +229,34 @@ abstract class Attribute {
       return null;
     }
     return int.tryParse(value);
+  }
+
+  EdgeInsets? getPadding() {
+    double? left = getDoubleFromStyle('padding-left');
+    double? top = getDoubleFromStyle('padding-top');
+    double? right = getDoubleFromStyle('padding-right');
+    double? bottom = getDoubleFromStyle('padding-bottom');
+    EdgeInsets? padding = getEdgeFromStyle("padding");
+    return EdgeInsets.only(
+      left: left ?? padding?.left ?? 0,
+      top: top ?? padding?.top ?? 0,
+      right: right ?? padding?.right ?? 0,
+      bottom: bottom ?? padding?.bottom ?? 0,
+    );
+  }
+
+  EdgeInsets? getMargin() {
+    double? left = getDoubleFromStyle('margin-left');
+    double? top = getDoubleFromStyle('margin-top');
+    double? right = getDoubleFromStyle('margin-right');
+    double? bottom = getDoubleFromStyle('margin-bottom');
+    EdgeInsets? padding = getEdgeFromStyle("margin");
+    return EdgeInsets.only(
+      left: left ?? padding?.left ?? 0,
+      top: top ?? padding?.top ?? 0,
+      right: right ?? padding?.right ?? 0,
+      bottom: bottom ?? padding?.bottom ?? 0,
+    );
   }
 
   EdgeInsets? getEdgeFromStyle(String key) {
